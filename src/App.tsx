@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Navigation from './components/Navigation/Navigation'
-import AccountView from './components/Views/AccountView'
-import CampaignsView from './components/Views/CampaignsView'
-import CategoriesView from './components/Views/CategoriesView'
-import DashboardView from './components/Views/DashboardView'
-import ProductsView from './components/Views/ProductsView'
+import AccountView from './Views/AccountView'
+import CampaignsView from './Views/CampaignsView'
+import CategoriesView from './Views/CategoriesView'
+import DashboardView from './Views/DashboardView'
+import ProductsView from './Views/ProductsView'
 
 const App = () => {
   return (

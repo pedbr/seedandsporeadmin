@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.4",
+    "@reach/visually-hidden": "^0.17.0",
     "@supabase/supabase-js": "^2.0.0-rc.10",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
