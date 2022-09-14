@@ -2,8 +2,16 @@ import { useState } from 'react'
 import { Button, Grid, TextField } from '@mui/material'
 import UploadImage from '../UploadImage'
 import { supabase } from '../../supabaseClient'
+import useStore from '../../store'
 
-const ProductForm = () => {
+interface ProductFormProps {
+  onSubmit: () => void
+}
+
+const ProductForm = ({ onSubmit }: ProductFormProps) => {
+  const triggerRefetchProducts = useStore(
+    (state) => state.triggerRefetchProducts
+  )
   const [name, setName] = useState<string | undefined>()
   const [description, setDescription] = useState<string | undefined>()
   const [price, setPrice] = useState<number | undefined>()
@@ -16,6 +24,8 @@ const ProductForm = () => {
       .insert([{ name, description, price, stock, imageUrl }])
     console.log('data', data)
     console.log('error', error)
+    triggerRefetchProducts()
+    onSubmit()
   }
 
   return (

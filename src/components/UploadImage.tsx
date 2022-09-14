@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import VisuallyHidden from '@reach/visually-hidden'
 import { Button } from '@mui/material'
+import { downloadImage, getRandomId } from '../utils'
 
 interface UploadImageProps {
   onUpload: (filePath: string) => void
@@ -10,29 +11,19 @@ interface UploadImageProps {
 }
 
 const UploadImage = ({ url, size, onUpload }: UploadImageProps) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
   const [uploading, setUploading] = useState(false)
 
+  const fetchImage = useCallback(async (path: string) => {
+    const fileUrl = await downloadImage('product-images', path)
+    setImageUrl(fileUrl)
+  }, [])
+
   useEffect(() => {
-    if (url) downloadImage(url)
-  }, [url])
+    if (url) fetchImage(url)
+  }, [url, fetchImage])
 
-  const downloadImage = async (path: string) => {
-    try {
-      const { data, error } = await supabase.storage
-        .from('products')
-        .download(path)
-      if (error) {
-        throw error
-      }
-      const url = URL.createObjectURL(data)
-      setImageUrl(url)
-    } catch (error: any) {
-      console.log('Error downloading image: ', error.message)
-    }
-  }
-
-  const uploadAvatar = async (event: any) => {
+  const uploadImage = async (event: any) => {
     try {
       setUploading(true)
 
@@ -42,7 +33,7 @@ const UploadImage = ({ url, size, onUpload }: UploadImageProps) => {
 
       const file = event.target.files[0]
       const fileExt = file.name.split('.').pop()
-      const fileName = `product-${Math.random()}.${fileExt}`
+      const fileName = `product-${getRandomId()}-${getRandomId()}.${fileExt}`
       const filePath = `${fileName}`
 
       let { error: uploadError } = await supabase.storage
@@ -83,7 +74,7 @@ const UploadImage = ({ url, size, onUpload }: UploadImageProps) => {
               type='file'
               id='single'
               accept='image/*'
-              onChange={uploadAvatar}
+              onChange={uploadImage}
               disabled={uploading}
             />
           </VisuallyHidden>

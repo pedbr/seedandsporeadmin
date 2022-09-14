@@ -4,23 +4,28 @@ import { supabase } from '../supabaseClient'
 import { ProductType } from '../types/products'
 import ProductCard from '../components/Products/ProductCard'
 import ProductForm from '../components/Products/ProductForm'
+import useStore from '../store'
 
 const ProductsView = () => {
   const [products, setProducts] = useState<ProductType[]>([])
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const refetchProducts = useStore((state) => state.refetchProducts)
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen)
 
   const fetchProducts = async () => {
-    const { data, error } = await supabase.from('products').select()
-    console.log(data)
-    console.log(error)
-    setProducts(data as ProductType[])
+    try {
+      const { data, error } = await supabase.from('products').select()
+      setProducts(data as ProductType[])
+      console.log(error)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
     fetchProducts()
-  }, [])
+  }, [refetchProducts])
 
   return (
     <>
@@ -50,7 +55,7 @@ const ProductsView = () => {
           },
         })}
       >
-        <ProductForm />
+        <ProductForm onSubmit={toggleDrawer} />
       </Drawer>
     </>
   )
