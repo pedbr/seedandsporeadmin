@@ -58,7 +58,7 @@ const UploadImage = ({ url, size, onUpload }: UploadImageProps) => {
         <img
           src={imageUrl}
           alt={'Product'}
-          style={{ height: size, width: size }}
+          style={{ height: size, width: size, objectFit: 'cover' }}
         />
       )}
 
@@ -67,7 +67,7 @@ const UploadImage = ({ url, size, onUpload }: UploadImageProps) => {
       ) : (
         <>
           <Button component='label' htmlFor='single'>
-            Upload
+            {imageUrl ? 'Change Image' : 'Upload Image'}
           </Button>
           <VisuallyHidden>
             <input
