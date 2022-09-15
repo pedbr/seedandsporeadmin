@@ -1,5 +1,6 @@
-import { useSnackbar } from 'notistack'
 import { useCallback, useState } from 'react'
+import { useSnackbar } from 'notistack'
+
 import { supabase } from '../supabaseClient'
 
 export const useDeleteById = (
@@ -20,7 +21,7 @@ export const useDeleteById = (
         const { error } = await supabase.from(table).delete().match({ id })
         if (error) throw error
         enqueueSnackbar('This item was successfully deleted', {
-          variant: 'success',
+          variant: 'info',
         })
       } catch (error) {
         setError(error)

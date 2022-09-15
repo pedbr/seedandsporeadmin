@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Box,
   Button,
@@ -9,20 +9,19 @@ import {
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useNavigate, useParams } from 'react-router-dom'
-import { supabase } from '../supabaseClient'
+
 import { ProductType } from '../types/products'
 import ProductForm from '../components/Products/ProductForm'
 import useStore from '../store'
 import { useGetImage } from '../hooks/useGetImage'
 import DeleteDialog from '../components/Dialogs/DeleteDialog'
 import { useDeleteById } from '../hooks/useDeleteById'
+import useFetchById from '../hooks/useFetchById'
 
 const SingleProductView = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-
-  const [product, setProduct] = useState<ProductType | undefined>()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const refetchSingleProduct = useStore((state) => state.refetchSingleProduct)
 
@@ -32,40 +31,34 @@ const SingleProductView = () => {
     setOpen(!open)
   }
 
+  const {
+    item,
+    isFetching,
+    error: errorFetching,
+  } = useFetchById<ProductType>('products', Number(id), refetchSingleProduct)
+
+  const {
+    handleDeleteById,
+    isDeleting,
+    error: errorDeleting,
+  } = useDeleteById('products')
+
   const { imageUrl, isImageLoading } = useGetImage(
     'product-images',
-    product?.imageUrl
+    item?.imageUrl
   )
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select()
-          .eq('id', id)
-          .single()
-        setProduct(data)
-        console.log('data', data)
-        console.log('error', error)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchProduct()
-  }, [id, refetchSingleProduct])
-
-  const { handleDeleteById, isDeleting, error } = useDeleteById('products')
-
-  const handleDelete = () => {
-    handleDeleteById(Number(id))
-    if (!error) {
+  const handleDelete = async () => {
+    await handleDeleteById(Number(id))
+    if (!errorDeleting) {
       navigate('/products')
       toggleDeleteDialog()
     }
   }
 
-  if (!product) return <div>Loading...</div>
+  if (isFetching) return <div>Loading...</div>
+
+  if (errorFetching) return <div>An error occurred</div>
 
   return (
     <>
@@ -98,21 +91,21 @@ const SingleProductView = () => {
             />
           )}
           <Stack spacing={4}>
-            <Typography variant={'h4'}>{product.name}</Typography>
-            <Typography variant={'body2'}>{product.description}</Typography>
+            <Typography variant={'h4'}>{item?.name}</Typography>
+            <Typography variant={'body2'}>{item?.description}</Typography>
             <Typography
               fontWeight={500}
               variant='caption'
               color='text.secondary'
             >
-              {`Stock: ${product.stock}`}
+              {`Stock: ${item?.stock}`}
             </Typography>
             <Typography
               fontWeight={500}
               variant='caption'
               color='text.secondary'
             >
-              {`Price: ${product.price}EUR`}
+              {`Price: ${item?.price}EUR`}
             </Typography>
           </Stack>
         </Stack>
@@ -120,7 +113,7 @@ const SingleProductView = () => {
       <DeleteDialog
         open={open}
         toggleDialog={toggleDeleteDialog}
-        entity={product.name}
+        entity={item?.name || ''}
         entityType={'product'}
         onDelete={handleDelete}
         isDeleting={isDeleting}
@@ -136,7 +129,7 @@ const SingleProductView = () => {
           },
         })}
       >
-        <ProductForm editMode defaultValues={product} onSubmit={toggleDrawer} />
+        <ProductForm editMode defaultValues={item} onSubmit={toggleDrawer} />
       </Drawer>
     </>
   )

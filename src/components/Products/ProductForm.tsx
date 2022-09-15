@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { useSnackbar } from 'notistack'
 import { Button, Grid, Stack, TextField, Typography } from '@mui/material'
 
 import UploadImage from '../UploadImage'
-import { supabase } from '../../supabaseClient'
 import useStore from '../../store'
 import { ProductType } from '../../types/products'
+import useCreateData from '../../hooks/useCreateData'
+import useEditData from '../../hooks/useEditData'
 
 interface ProductFormProps {
   onSubmit: () => void
@@ -24,8 +24,6 @@ const ProductForm = ({
   const triggerRefetchSingleProduct = useStore(
     (state) => state.triggerRefetchSingleProduct
   )
-  const { enqueueSnackbar } = useSnackbar()
-  const [submitting, setSubmitting] = useState(false)
   const [name, setName] = useState<string>(defaultValues?.name || '')
   const [description, setDescription] = useState<string>(
     defaultValues?.description || ''
@@ -36,58 +34,32 @@ const ProductForm = ({
     defaultValues?.imageUrl
   )
 
+  const { handleCreateData, isCreating, error } = useCreateData('products')
+
+  const {
+    handleEditData,
+    isEditing,
+    error: editingError,
+  } = useEditData('products')
+
   const missingFields = !name || !price || !stock
 
   const handleSubmit = async () => {
-    setSubmitting(true)
-    try {
-      const { error } = await supabase
-        .from('products')
-        .insert([{ name, description, price, stock, imageUrl }])
-      if (error) {
-        console.log(error)
-        enqueueSnackbar('There was an error creating this product', {
-          variant: 'error',
-        })
-        return
-      }
+    await handleCreateData({ name, description, price, stock, imageUrl })
+    if (!error) {
       triggerRefetchProducts()
-      enqueueSnackbar('Product created successfully!', { variant: 'success' })
       onSubmit()
-    } catch (error) {
-      console.log('error', error)
-      enqueueSnackbar('There was an error creating this product', {
-        variant: 'error',
-      })
-    } finally {
-      setSubmitting(false)
     }
   }
 
   const handleEdit = async () => {
-    setSubmitting(true)
-    try {
-      const { error } = await supabase
-        .from('products')
-        .update([{ name, description, price, stock, imageUrl }])
-        .match({ id: defaultValues?.id })
-      if (error) {
-        console.log(error)
-        enqueueSnackbar('There was an error editing this product', {
-          variant: 'error',
-        })
-        return
-      }
+    await handleEditData(
+      { name, description, price, stock, imageUrl },
+      defaultValues?.id
+    )
+    if (!editingError) {
       triggerRefetchSingleProduct()
-      enqueueSnackbar('Product edited successfully!', { variant: 'success' })
       onSubmit()
-    } catch (error) {
-      console.log('error', error)
-      enqueueSnackbar('There was an error editing this product', {
-        variant: 'error',
-      })
-    } finally {
-      setSubmitting(false)
     }
   }
 
@@ -149,14 +121,14 @@ const ProductForm = ({
       </Grid>
       <Stack direction={'row'} justifyContent={'space-between'} p={2}>
         <Button
-          disabled={submitting}
+          disabled={isEditing || isCreating}
           onClick={() => onSubmit()}
           variant={'outlined'}
         >
           Cancel
         </Button>
         <Button
-          disabled={missingFields || submitting}
+          disabled={missingFields || isEditing || isCreating}
           onClick={() => (editMode ? handleEdit() : handleSubmit())}
           variant={'contained'}
         >

@@ -1,39 +1,26 @@
 import { Box, Button, Drawer, Grid, Stack, Typography } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
-import { supabase } from '../supabaseClient'
+import { useState } from 'react'
+
+import useStore from '../store'
+import useFetchData from '../hooks/useFetchData'
 import { ProductType } from '../types/products'
 import ProductCard from '../components/Products/ProductCard'
 import ProductForm from '../components/Products/ProductForm'
-import useStore from '../store'
-import { useSnackbar } from 'notistack'
 
 const ProductsView = () => {
-  const [products, setProducts] = useState<ProductType[]>([])
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const refetchProducts = useStore((state) => state.refetchProducts)
-  const { enqueueSnackbar } = useSnackbar()
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen)
 
-  const fetchProducts = useCallback(async () => {
-    try {
-      const { data, error } = await supabase.from('products').select()
-      if (error) {
-        console.log(error)
-        enqueueSnackbar('There was an error fetching products', {
-          variant: 'error',
-        })
-        return
-      }
-      setProducts(data as ProductType[])
-    } catch (error) {
-      console.log(error)
-    }
-  }, [enqueueSnackbar])
+  const { data, isFetching, error } = useFetchData<ProductType>(
+    'products',
+    refetchProducts
+  )
 
-  useEffect(() => {
-    fetchProducts()
-  }, [refetchProducts, fetchProducts])
+  if (isFetching) return <Box>{'Loading...'}</Box>
+
+  if (error) return <Box>{'An error ocurred...'}</Box>
 
   return (
     <>
@@ -46,7 +33,7 @@ const ProductsView = () => {
         </Stack>
       </Box>
       <Grid container spacing={2} p={2}>
-        {products.map((product) => (
+        {data.map((product) => (
           <Grid item xs={12} key={product.id}>
             <ProductCard {...product} />
           </Grid>

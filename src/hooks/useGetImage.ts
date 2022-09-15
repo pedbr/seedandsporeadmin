@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 import { supabase } from '../supabaseClient'
 

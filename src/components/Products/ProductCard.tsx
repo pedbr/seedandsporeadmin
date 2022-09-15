@@ -38,8 +38,8 @@ const ProductCard = ({
     setOpen(!open)
   }
 
-  const handleDelete = () => {
-    handleDeleteById(id)
+  const handleDelete = async () => {
+    await handleDeleteById(id)
     if (!error) {
       triggerRefetchProducts()
       toggleDeleteDialog()
