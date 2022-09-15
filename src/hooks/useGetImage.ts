@@ -1,4 +1,3 @@
-import { StorageError } from '@supabase/storage-js'
 import { useCallback, useEffect, useState } from 'react'
 import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 import { supabase } from '../supabaseClient'
@@ -9,11 +8,11 @@ export const useGetImage = (
 ): {
   imageUrl: string
   isImageLoading: boolean
-  error: StorageError | undefined
+  error: unknown | undefined
 } => {
   const [imageUrl, setImageUrl] = useState<string>(PRODUCT_DEFAULT_IMAGE)
   const [isImageLoading, setImageLoading] = useState(false)
-  const [error, setError] = useState<StorageError | undefined>()
+  const [error, setError] = useState<unknown | undefined>()
 
   const fetchImageUrl = useCallback(async () => {
     setImageLoading(true)
@@ -22,13 +21,13 @@ export const useGetImage = (
         .from(bucketName)
         .download(path || '')
       if (error) {
-        setError(error)
+        throw error
       }
       if (data) {
         const url = URL.createObjectURL(data)
         setImageUrl(url)
       }
-    } catch (error: any) {
+    } catch (error) {
       setError(error)
     } finally {
       setImageLoading(false)

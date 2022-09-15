@@ -26,12 +26,12 @@ const ProductForm = ({
   )
   const { enqueueSnackbar } = useSnackbar()
   const [submitting, setSubmitting] = useState(false)
-  const [name, setName] = useState<string | undefined>(defaultValues?.name)
-  const [description, setDescription] = useState<string | undefined>(
-    defaultValues?.description
+  const [name, setName] = useState<string>(defaultValues?.name || '')
+  const [description, setDescription] = useState<string>(
+    defaultValues?.description || ''
   )
-  const [price, setPrice] = useState<number | undefined>(defaultValues?.price)
-  const [stock, setStock] = useState<number | undefined>(defaultValues?.stock)
+  const [price, setPrice] = useState<number>(defaultValues?.price || 0)
+  const [stock, setStock] = useState<number>(defaultValues?.stock || 0)
   const [imageUrl, setImageUrl] = useState<string | undefined>(
     defaultValues?.imageUrl
   )
@@ -103,7 +103,6 @@ const ProductForm = ({
           <TextField
             required
             fullWidth
-            defaultValue={defaultValues?.name}
             label={'Name'}
             onChange={(e) => setName(e.target.value)}
             value={name}
@@ -113,7 +112,6 @@ const ProductForm = ({
           <TextField
             fullWidth
             label={'Description'}
-            defaultValue={defaultValues?.description}
             multiline
             onChange={(e) => setDescription(e.target.value)}
             value={description}
@@ -125,7 +123,6 @@ const ProductForm = ({
             fullWidth
             type={'number'}
             label={'Price (EUR)'}
-            defaultValue={defaultValues?.price}
             onChange={(e) => setPrice(Number(e.target.value))}
             value={price}
           />
@@ -136,7 +133,6 @@ const ProductForm = ({
             fullWidth
             type={'number'}
             label={'Stock (units)'}
-            defaultValue={defaultValues?.stock}
             onChange={(e) => setStock(Number(e.target.value))}
             value={stock}
           />

@@ -2,11 +2,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Drawer,
   IconButton,
   Stack,
@@ -19,6 +14,8 @@ import { ProductType } from '../types/products'
 import ProductForm from '../components/Products/ProductForm'
 import useStore from '../store'
 import { useGetImage } from '../hooks/useGetImage'
+import DeleteDialog from '../components/Dialogs/DeleteDialog'
+import { useDeleteById } from '../hooks/useDeleteById'
 
 const SingleProductView = () => {
   const { id } = useParams()
@@ -58,18 +55,13 @@ const SingleProductView = () => {
     fetchProduct()
   }, [id, refetchSingleProduct])
 
-  const handleDelete = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .delete()
-        .match({ id })
-      console.log('delete Data', data)
-      console.log('delete Error', error)
+  const { handleDeleteById, isDeleting, error } = useDeleteById('products')
+
+  const handleDelete = () => {
+    handleDeleteById(Number(id))
+    if (!error) {
       navigate('/products')
       toggleDeleteDialog()
-    } catch (error) {
-      console.log(error)
     }
   }
 
@@ -125,28 +117,14 @@ const SingleProductView = () => {
           </Stack>
         </Stack>
       </Box>
-      <Dialog open={open} onClose={toggleDeleteDialog}>
-        <DialogTitle id='alert-dialog-title'>{`Delete ${product.name}?`}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>
-            Are you sure you wish to delete this product? This action is
-            permanent and will delete all the product's information.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={toggleDeleteDialog} variant='outlined'>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDelete}
-            color='error'
-            variant='contained'
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteDialog
+        open={open}
+        toggleDialog={toggleDeleteDialog}
+        entity={product.name}
+        entityType={'product'}
+        onDelete={handleDelete}
+        isDeleting={isDeleting}
+      />
       <Drawer
         anchor={'right'}
         open={isDrawerOpen}

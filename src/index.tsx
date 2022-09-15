@@ -1,8 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
+
+import App from './App'
+import reportWebVitals from './reportWebVitals'
 
 Sentry.init({
   dsn: 'https://30a625fa39104f7badb4420b12091c68@o1411757.ingest.sentry.io/6750407',
@@ -20,3 +22,5 @@ root.render(
     <App />
   </React.StrictMode>
 )
+
+reportWebVitals()

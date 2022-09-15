@@ -8,18 +8,14 @@ import {
   CardMedia,
   Typography,
   Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from '@mui/material'
 
 import { ProductType } from '../../types/products'
 import { PRODUCT_DEFAULT_IMAGE } from '../../constants'
-import { supabase } from '../../supabaseClient'
 import useStore from '../../store'
 import { useGetImage } from '../../hooks/useGetImage'
+import { useDeleteById } from '../../hooks/useDeleteById'
+import DeleteDialog from '../Dialogs/DeleteDialog'
 
 const ProductCard = ({
   id,
@@ -36,23 +32,17 @@ const ProductCard = ({
   )
   const navigate = useNavigate()
   const { imageUrl, isImageLoading } = useGetImage('product-images', imagePath)
+  const { handleDeleteById, isDeleting, error } = useDeleteById('products')
 
   const toggleDeleteDialog = () => {
     setOpen(!open)
   }
 
-  const handleDelete = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .delete()
-        .match({ id })
-      console.log('delete Data', data)
-      console.log('delete Error', error)
+  const handleDelete = () => {
+    handleDeleteById(id)
+    if (!error) {
       triggerRefetchProducts()
       toggleDeleteDialog()
-    } catch (error) {
-      console.log(error)
     }
   }
 
@@ -122,6 +112,7 @@ const ProductCard = ({
                 size='small'
                 color='error'
                 variant='outlined'
+                disabled={isDeleting}
               >
                 Delete
               </Button>
@@ -129,28 +120,14 @@ const ProductCard = ({
           </CardActions>
         </Stack>
       </Card>
-      <Dialog open={open} onClose={toggleDeleteDialog}>
-        <DialogTitle id='alert-dialog-title'>{`Delete ${name}?`}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>
-            Are you sure you wish to delete this product? This action is
-            permanent and will delete all the product's information.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={toggleDeleteDialog} variant='outlined'>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDelete}
-            color='error'
-            variant='contained'
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteDialog
+        open={open}
+        toggleDialog={toggleDeleteDialog}
+        entity={name}
+        entityType={'product'}
+        onDelete={handleDelete}
+        isDeleting={isDeleting}
+      />
     </>
   )
 }
