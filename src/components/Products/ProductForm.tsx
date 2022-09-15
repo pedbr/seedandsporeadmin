@@ -144,7 +144,7 @@ const ProductForm = ({
         <Grid item xs={12}>
           <UploadImage
             size={300}
-            url={imageUrl || defaultValues?.imageUrl}
+            imagePath={imageUrl || defaultValues?.imageUrl}
             onUpload={(url) => {
               setImageUrl(url)
             }}

@@ -1,27 +1,20 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import VisuallyHidden from '@reach/visually-hidden'
 import { Button } from '@mui/material'
-import { downloadImage, getRandomId } from '../utils'
+import { getRandomId } from '../utils'
+import { useGetImage } from '../hooks/useGetImage'
 
 interface UploadImageProps {
   onUpload: (filePath: string) => void
   size?: number
-  url?: string
+  imagePath?: string
 }
 
-const UploadImage = ({ url, size, onUpload }: UploadImageProps) => {
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
+const UploadImage = ({ imagePath, size, onUpload }: UploadImageProps) => {
   const [uploading, setUploading] = useState(false)
 
-  const fetchImage = useCallback(async (path: string) => {
-    const fileUrl = await downloadImage('product-images', path)
-    setImageUrl(fileUrl)
-  }, [])
-
-  useEffect(() => {
-    if (url) fetchImage(url)
-  }, [url, fetchImage])
+  const { imageUrl, isImageLoading } = useGetImage('product-images', imagePath)
 
   const uploadImage = async (event: any) => {
     try {
@@ -54,7 +47,7 @@ const UploadImage = ({ url, size, onUpload }: UploadImageProps) => {
 
   return (
     <div style={{ width: size }}>
-      {imageUrl && (
+      {!isImageLoading && (
         <img
           src={imageUrl}
           alt={'Product'}

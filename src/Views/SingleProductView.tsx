@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -16,21 +16,18 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { ProductType } from '../types/products'
-import { downloadImage } from '../utils'
-import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 import ProductForm from '../components/Products/ProductForm'
 import useStore from '../store'
+import { useGetImage } from '../hooks/useGetImage'
 
 const SingleProductView = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
+
   const [product, setProduct] = useState<ProductType | undefined>()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const refetchSingleProduct = useStore((state) => state.refetchSingleProduct)
-
-  console.log('refetchSingleProduct', refetchSingleProduct)
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen)
 
@@ -38,14 +35,10 @@ const SingleProductView = () => {
     setOpen(!open)
   }
 
-  const fetchImage = useCallback(async (path: string) => {
-    const fileUrl = await downloadImage('product-images', path)
-    setImageUrl(fileUrl)
-  }, [])
-
-  useEffect(() => {
-    if (product?.imageUrl) fetchImage(product.imageUrl)
-  }, [product?.imageUrl, fetchImage])
+  const { imageUrl, isImageLoading } = useGetImage(
+    'product-images',
+    product?.imageUrl
+  )
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -103,11 +96,15 @@ const SingleProductView = () => {
           </Stack>
         </Stack>
         <Stack direction={'row'} spacing={2}>
-          <img
-            src={imageUrl || PRODUCT_DEFAULT_IMAGE}
-            alt={'Product'}
-            style={{ height: 300, width: 300, objectFit: 'cover' }}
-          />
+          {isImageLoading ? (
+            'Loading...'
+          ) : (
+            <img
+              src={imageUrl}
+              alt={'Product'}
+              style={{ height: 300, width: 300, objectFit: 'cover' }}
+            />
+          )}
           <Stack spacing={4}>
             <Typography variant={'h4'}>{product.name}</Typography>
             <Typography variant={'body2'}>{product.description}</Typography>

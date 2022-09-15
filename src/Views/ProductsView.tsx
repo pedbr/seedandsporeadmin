@@ -47,7 +47,7 @@ const ProductsView = () => {
       </Box>
       <Grid container spacing={2} p={2}>
         {products.map((product) => (
-          <Grid item xs={12}>
+          <Grid item xs={12} key={product.id}>
             <ProductCard {...product} />
           </Grid>
         ))}

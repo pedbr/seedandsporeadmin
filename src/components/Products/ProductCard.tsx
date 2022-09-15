@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Button,
   CardActions,
@@ -12,50 +14,32 @@ import {
   DialogContentText,
   DialogActions,
 } from '@mui/material'
+
 import { ProductType } from '../../types/products'
 import { PRODUCT_DEFAULT_IMAGE } from '../../constants'
-import { useCallback, useEffect, useState } from 'react'
-import { downloadImage } from '../../utils'
 import { supabase } from '../../supabaseClient'
 import useStore from '../../store'
-import { useNavigate } from 'react-router-dom'
+import { useGetImage } from '../../hooks/useGetImage'
 
 const ProductCard = ({
   id,
-  imageUrl,
+  imageUrl: imagePath,
   name,
   description,
   stock,
   price,
   available,
 }: ProductType) => {
-  const [isImageLoading, setImageLoading] = useState(false)
-  const [image, setImage] = useState<string | undefined>(undefined)
   const [open, setOpen] = useState(false)
   const triggerRefetchProducts = useStore(
     (state) => state.triggerRefetchProducts
   )
   const navigate = useNavigate()
+  const { imageUrl, isImageLoading } = useGetImage('product-images', imagePath)
 
   const toggleDeleteDialog = () => {
     setOpen(!open)
   }
-
-  const fetchImage = useCallback(async () => {
-    setImageLoading(true)
-    try {
-      const fileUrl = await downloadImage('product-images', imageUrl)
-      setImage(fileUrl)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setImageLoading(false)
-    }
-  }, [imageUrl])
-
-  useEffect(() => {
-    fetchImage()
-  }, [fetchImage])
 
   const handleDelete = async () => {
     try {
@@ -90,7 +74,7 @@ const ProductCard = ({
             component='img'
             height={'140px'}
             width={'140px'}
-            image={image || PRODUCT_DEFAULT_IMAGE}
+            image={imageUrl || PRODUCT_DEFAULT_IMAGE}
             alt='green iguana'
           />
         )}
