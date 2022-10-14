@@ -13,10 +13,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ProductType } from '../types/products'
 import ProductForm from '../components/Products/ProductForm'
 import useStore from '../store'
-import { useGetImage } from '../hooks/useGetImage'
 import DeleteDialog from '../components/Dialogs/DeleteDialog'
 import { useDeleteById } from '../hooks/useDeleteById'
 import useFetchById from '../hooks/useFetchById'
+import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 
 const SingleProductView = () => {
   const { id } = useParams()
@@ -42,11 +42,6 @@ const SingleProductView = () => {
     isDeleting,
     error: errorDeleting,
   } = useDeleteById('products')
-
-  const { imageUrl, isImageLoading } = useGetImage(
-    'product-images',
-    item?.imageUrl
-  )
 
   const handleDelete = async () => {
     await handleDeleteById(Number(id))
@@ -81,15 +76,11 @@ const SingleProductView = () => {
           </Stack>
         </Stack>
         <Stack direction={'row'} spacing={2}>
-          {isImageLoading ? (
-            'Loading...'
-          ) : (
-            <img
-              src={imageUrl}
-              alt={'Product'}
-              style={{ height: 300, width: 300, objectFit: 'cover' }}
-            />
-          )}
+          <img
+            src={item?.imageUrl || PRODUCT_DEFAULT_IMAGE}
+            alt={'Product'}
+            style={{ height: 300, width: 300, objectFit: 'cover' }}
+          />
           <Stack spacing={4}>
             <Typography variant={'h4'}>{item?.name}</Typography>
             <Typography variant={'body2'}>{item?.description}</Typography>

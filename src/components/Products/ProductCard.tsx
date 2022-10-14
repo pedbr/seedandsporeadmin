@@ -13,13 +13,12 @@ import {
 import { ProductType } from '../../types/products'
 import { PRODUCT_DEFAULT_IMAGE } from '../../constants'
 import useStore from '../../store'
-import { useGetImage } from '../../hooks/useGetImage'
 import { useDeleteById } from '../../hooks/useDeleteById'
 import DeleteDialog from '../Dialogs/DeleteDialog'
 
 const ProductCard = ({
   id,
-  imageUrl: imagePath,
+  imageUrl,
   name,
   description,
   stock,
@@ -31,7 +30,6 @@ const ProductCard = ({
     (state) => state.triggerRefetchProducts
   )
   const navigate = useNavigate()
-  const { imageUrl, isImageLoading } = useGetImage('product-images', imagePath)
   const { handleDeleteById, isDeleting, error } = useDeleteById('products')
 
   const toggleDeleteDialog = () => {
@@ -57,17 +55,14 @@ const ProductCard = ({
           },
         }}
       >
-        {isImageLoading ? (
-          'Loading...'
-        ) : (
-          <CardMedia
-            component='img'
-            height={'140px'}
-            width={'140px'}
-            image={imageUrl || PRODUCT_DEFAULT_IMAGE}
-            alt='green iguana'
-          />
-        )}
+        <CardMedia
+          component='img'
+          height={'140px'}
+          width={'140px'}
+          image={imageUrl || PRODUCT_DEFAULT_IMAGE}
+          alt='green iguana'
+        />
+
         <Stack
           direction={'row'}
           justifyContent={'space-between'}

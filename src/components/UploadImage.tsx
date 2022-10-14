@@ -1,21 +1,22 @@
 import { useState } from 'react'
 import VisuallyHidden from '@reach/visually-hidden'
 import { Button } from '@mui/material'
+import { storage } from '../api/firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
-import { supabase } from '../supabaseClient'
 import { getRandomId } from '../utils'
-import { useGetImage } from '../hooks/useGetImage'
+import { useSnackbar } from 'notistack'
+import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 
 interface UploadImageProps {
   onUpload: (filePath: string) => void
   size?: number
-  imagePath?: string
+  imageUrl?: string
 }
 
-const UploadImage = ({ imagePath, size, onUpload }: UploadImageProps) => {
+const UploadImage = ({ imageUrl, size, onUpload }: UploadImageProps) => {
   const [uploading, setUploading] = useState(false)
-
-  const { imageUrl, isImageLoading } = useGetImage('product-images', imagePath)
+  const { enqueueSnackbar } = useSnackbar()
 
   const uploadImage = async (event: any) => {
     try {
@@ -28,19 +29,25 @@ const UploadImage = ({ imagePath, size, onUpload }: UploadImageProps) => {
       const file = event.target.files[0]
       const fileExt = file.name.split('.').pop()
       const fileName = `product-${getRandomId()}-${getRandomId()}.${fileExt}`
-      const filePath = `${fileName}`
 
-      let { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(filePath, file)
-
-      if (uploadError) {
-        throw uploadError
+      const imageRef = ref(storage, `products/${fileName}`)
+      const { metadata } = await uploadBytes(imageRef, file)
+      if (metadata) {
+        const url = await getDownloadURL(imageRef)
+        if (url) {
+          onUpload(url)
+          enqueueSnackbar('Image uploaded successfully', { variant: 'success' })
+        } else {
+          throw new Error()
+        }
+      } else {
+        throw new Error()
       }
-
-      onUpload(filePath)
     } catch (error: any) {
-      alert(error.message)
+      enqueueSnackbar('There was an error uploading your image', {
+        variant: 'error',
+      })
+      console.error(error.message)
     } finally {
       setUploading(false)
     }
@@ -48,13 +55,11 @@ const UploadImage = ({ imagePath, size, onUpload }: UploadImageProps) => {
 
   return (
     <div style={{ width: size }}>
-      {!isImageLoading && (
-        <img
-          src={imageUrl}
-          alt={'Product'}
-          style={{ height: size, width: size, objectFit: 'cover' }}
-        />
-      )}
+      <img
+        src={imageUrl || PRODUCT_DEFAULT_IMAGE}
+        alt={'Product'}
+        style={{ height: size, width: size, objectFit: 'cover' }}
+      />
 
       {uploading ? (
         'Uploading...'

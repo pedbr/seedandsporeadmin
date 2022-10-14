@@ -34,7 +34,7 @@ const ProductForm = ({
     defaultValues?.imageUrl
   )
 
-  const { handleCreateData, isCreating, error } = useCreateData('products')
+  const { handleCreateData, isCreating, error } = useCreateData('/products')
 
   const {
     handleEditData,
@@ -45,6 +45,7 @@ const ProductForm = ({
   const missingFields = !name || !price || !stock
 
   const handleSubmit = async () => {
+    console.log('here')
     await handleCreateData({ name, description, price, stock, imageUrl })
     if (!error) {
       triggerRefetchProducts()
@@ -112,7 +113,7 @@ const ProductForm = ({
         <Grid item xs={12}>
           <UploadImage
             size={300}
-            imagePath={imageUrl || defaultValues?.imageUrl}
+            imageUrl={imageUrl || defaultValues?.imageUrl}
             onUpload={(url) => {
               setImageUrl(url)
             }}

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSnackbar } from 'notistack'
 
-import { supabase } from '../supabaseClient'
+import { api } from '../api'
 
-function useFetchData<T>(table: string, refetch?: number) {
+function useFetchData<T>(endpoint: string, refetch?: number) {
   const [data, setData] = useState<T[]>([])
   const [error, setError] = useState<unknown | undefined>()
   const [isFetching, setIsFetching] = useState(false)
@@ -12,11 +12,12 @@ function useFetchData<T>(table: string, refetch?: number) {
   const fetchProducts = useCallback(async () => {
     setIsFetching(true)
     try {
-      const { data, error } = await supabase.from('products').select()
-      if (error) {
-        throw error
+      const { data, status } = await api.get(endpoint)
+      if (status === 200) {
+        setData(data)
+      } else {
+        throw new Error(data?.message)
       }
-      setData(data)
     } catch (error) {
       setError(error)
       enqueueSnackbar('There was an error fetching data', {
@@ -25,7 +26,7 @@ function useFetchData<T>(table: string, refetch?: number) {
     } finally {
       setIsFetching(false)
     }
-  }, [enqueueSnackbar])
+  }, [enqueueSnackbar, endpoint])
 
   useEffect(() => {
     fetchProducts()

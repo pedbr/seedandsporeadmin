@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 
-import { supabase } from '../supabaseClient'
+import { api } from '../api'
 
-const useEditData = (table: string) => {
+const useEditData = (endpoint: string) => {
   const [isEditing, setEditing] = useState(false)
   const [error, setError] = useState<unknown | undefined>()
   const { enqueueSnackbar } = useSnackbar()
@@ -11,14 +11,15 @@ const useEditData = (table: string) => {
   const handleEditData = async (newObject: unknown, targetId?: number) => {
     setEditing(true)
     try {
-      const { error } = await supabase
-        .from(table)
-        .update([newObject])
-        .match({ id: targetId })
-      if (error) {
-        throw error
+      const { status, data } = await api.patch(
+        `${endpoint}/${targetId}`,
+        newObject
+      )
+      if (status === 200) {
+        enqueueSnackbar('Item edited successfully!', { variant: 'success' })
+      } else {
+        throw new Error(data?.message)
       }
-      enqueueSnackbar('Item edited successfully!', { variant: 'success' })
     } catch (error) {
       setError(error)
       enqueueSnackbar('There was an error editing this item', {

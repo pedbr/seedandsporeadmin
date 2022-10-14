@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
 import { useSnackbar } from 'notistack'
 
-import { supabase } from '../supabaseClient'
+import { api } from '../api'
 
 export const useDeleteById = (
-  table: string
+  endpoint: string
 ): {
   handleDeleteById: (id: number) => Promise<void>
   isDeleting: boolean
@@ -18,11 +18,14 @@ export const useDeleteById = (
     async (id: number) => {
       setDeleting(true)
       try {
-        const { error } = await supabase.from(table).delete().match({ id })
-        if (error) throw error
-        enqueueSnackbar('This item was successfully deleted', {
-          variant: 'info',
-        })
+        const { status, data } = await api.delete(`${endpoint}/${id}`)
+        if (status === 200) {
+          enqueueSnackbar('This item was successfully deleted', {
+            variant: 'info',
+          })
+        } else {
+          throw new Error(data?.message)
+        }
       } catch (error) {
         setError(error)
         enqueueSnackbar('There was an error deleting this item', {
@@ -32,7 +35,7 @@ export const useDeleteById = (
         setDeleting(false)
       }
     },
-    [table, enqueueSnackbar]
+    [endpoint, enqueueSnackbar]
   )
 
   return { handleDeleteById, isDeleting, error }

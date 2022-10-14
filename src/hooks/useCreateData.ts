@@ -1,9 +1,8 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
+import { api } from '../api'
 
-import { supabase } from '../supabaseClient'
-
-const useCreateData = (table: string) => {
+const useCreateData = (endpoint: string) => {
   const [isCreating, setCreating] = useState(false)
   const [error, setError] = useState<unknown | undefined>()
   const { enqueueSnackbar } = useSnackbar()
@@ -11,11 +10,12 @@ const useCreateData = (table: string) => {
   const handleCreateData = async (item: unknown) => {
     setCreating(true)
     try {
-      const { error } = await supabase.from(table).insert([item])
-      if (error) {
-        throw error
+      const { status, data } = await api.post(endpoint, item)
+      if (status === 200) {
+        enqueueSnackbar('Product created successfully!', { variant: 'success' })
+      } else {
+        throw new Error(data?.message)
       }
-      enqueueSnackbar('Product created successfully!', { variant: 'success' })
     } catch (error) {
       setError(error)
       enqueueSnackbar('There was an error creating this item', {
