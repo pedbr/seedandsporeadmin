@@ -1,5 +1,5 @@
 export interface ProductType {
-  id: number
+  id: string
   createdAt: number
   name: string
   stock: number

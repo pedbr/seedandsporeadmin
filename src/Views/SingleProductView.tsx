@@ -35,7 +35,7 @@ const SingleProductView = () => {
     item,
     isFetching,
     error: errorFetching,
-  } = useFetchById<ProductType>('products', Number(id), refetchSingleProduct)
+  } = useFetchById<ProductType>('/products', id, refetchSingleProduct)
 
   const {
     handleDeleteById,
@@ -44,10 +44,12 @@ const SingleProductView = () => {
   } = useDeleteById('products')
 
   const handleDelete = async () => {
-    await handleDeleteById(Number(id))
-    if (!errorDeleting) {
-      navigate('/products')
-      toggleDeleteDialog()
+    if (id) {
+      await handleDeleteById(id)
+      if (!errorDeleting) {
+        navigate('/products')
+        toggleDeleteDialog()
+      }
     }
   }
 

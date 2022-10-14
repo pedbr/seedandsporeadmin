@@ -23,7 +23,6 @@ const ProductCard = ({
   description,
   stock,
   price,
-  available,
 }: ProductType) => {
   const [open, setOpen] = useState(false)
   const triggerRefetchProducts = useStore(

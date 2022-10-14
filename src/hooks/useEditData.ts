@@ -8,7 +8,7 @@ const useEditData = (endpoint: string) => {
   const [error, setError] = useState<unknown | undefined>()
   const { enqueueSnackbar } = useSnackbar()
 
-  const handleEditData = async (newObject: unknown, targetId?: number) => {
+  const handleEditData = async (newObject: unknown, targetId?: string) => {
     setEditing(true)
     try {
       const { status, data } = await api.patch(

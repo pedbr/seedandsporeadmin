@@ -6,7 +6,7 @@ import { api } from '../api'
 export const useDeleteById = (
   endpoint: string
 ): {
-  handleDeleteById: (id: number) => Promise<void>
+  handleDeleteById: (id: string) => Promise<void>
   isDeleting: boolean
   error: unknown | undefined
 } => {
@@ -15,7 +15,7 @@ export const useDeleteById = (
   const { enqueueSnackbar } = useSnackbar()
 
   const handleDeleteById = useCallback(
-    async (id: number) => {
+    async (id: string) => {
       setDeleting(true)
       try {
         const { status, data } = await api.delete(`${endpoint}/${id}`)

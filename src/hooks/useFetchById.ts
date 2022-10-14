@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack'
 
 import { api } from '../api'
 
-function useFetchById<T>(endpoint: string, id?: number, refetch?: number) {
+function useFetchById<T>(endpoint: string, id?: string, refetch?: number) {
   const [item, setItem] = useState<T>()
   const [isFetching, setIsFetching] = useState(false)
   const [error, setError] = useState<unknown | undefined>()
