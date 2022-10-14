@@ -23,6 +23,7 @@ const ProductCard = ({
   description,
   stock,
   price,
+  weight,
 }: ProductType) => {
   const [open, setOpen] = useState(false)
   const triggerRefetchProducts = useStore(
@@ -80,14 +81,21 @@ const ProductCard = ({
                 variant='caption'
                 color='text.secondary'
               >
-                {`Stock: ${stock}`}
+                {`Stock: ${stock} Units`}
               </Typography>
               <Typography
                 fontWeight={500}
                 variant='caption'
                 color='text.secondary'
               >
-                {`Price: ${price}EUR`}
+                {`Price: ${price} EUR`}
+              </Typography>
+              <Typography
+                fontWeight={500}
+                variant='caption'
+                color='text.secondary'
+              >
+                {`Weight: ${weight} grams`}
               </Typography>
             </Stack>
           </CardContent>

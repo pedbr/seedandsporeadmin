@@ -91,14 +91,21 @@ const SingleProductView = () => {
               variant='caption'
               color='text.secondary'
             >
-              {`Stock: ${item?.stock}`}
+              {`Stock: ${item?.stock} units`}
             </Typography>
             <Typography
               fontWeight={500}
               variant='caption'
               color='text.secondary'
             >
-              {`Price: ${item?.price}EUR`}
+              {`Price: ${item?.price} EUR`}
+            </Typography>
+            <Typography
+              fontWeight={500}
+              variant='caption'
+              color='text.secondary'
+            >
+              {`Price: ${item?.weight} grams`}
             </Typography>
           </Stack>
         </Stack>

@@ -30,6 +30,7 @@ const ProductForm = ({
   )
   const [price, setPrice] = useState<number>(defaultValues?.price || 0)
   const [stock, setStock] = useState<number>(defaultValues?.stock || 0)
+  const [weight, setWeight] = useState<number>(defaultValues?.weight || 0)
   const [imageUrl, setImageUrl] = useState<string | undefined>(
     defaultValues?.imageUrl
   )
@@ -46,7 +47,14 @@ const ProductForm = ({
 
   const handleSubmit = async () => {
     console.log('here')
-    await handleCreateData({ name, description, price, stock, imageUrl })
+    await handleCreateData({
+      name,
+      description,
+      price,
+      stock,
+      imageUrl,
+      weight,
+    })
     if (!error) {
       triggerRefetchProducts()
       onSubmit()
@@ -55,7 +63,7 @@ const ProductForm = ({
 
   const handleEdit = async () => {
     await handleEditData(
-      { name, description, price, stock, imageUrl },
+      { name, description, price, stock, imageUrl, weight },
       defaultValues?.id
     )
     if (!editingError) {
@@ -108,6 +116,16 @@ const ProductForm = ({
             label={'Stock (units)'}
             onChange={(e) => setStock(Number(e.target.value))}
             value={stock}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
+            fullWidth
+            type={'number'}
+            label={'Weight (grams)'}
+            onChange={(e) => setWeight(Number(e.target.value))}
+            value={weight}
           />
         </Grid>
         <Grid item xs={12}>
