@@ -14,6 +14,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket'
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import CampaignIcon from '@mui/icons-material/Campaign'
 import SellIcon from '@mui/icons-material/Sell'
@@ -148,6 +149,12 @@ const Navigation = ({ children }: NavigationProps) => {
             icon={<ShoppingBasketIcon />}
             label={'Products'}
             navigateTo={'/products'}
+          />
+          <NavigationItem
+            open={open}
+            icon={<AddShoppingCartIcon />}
+            label={'Orders'}
+            navigateTo={'/orders'}
           />
           <NavigationItem
             open={open}
