@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { SnackbarProvider } from 'notistack'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import Navigation from './components/Navigation/Navigation'
 import AccountView from './Views/AccountView'
@@ -10,9 +12,17 @@ import ProductsView from './Views/ProductsView'
 import SingleProductView from './Views/SingleProductView'
 import OrdersView from './Views/OrdersView'
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
+
 const App = () => {
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
       <SnackbarProvider>
         <BrowserRouter>
           <Navigation>
@@ -28,7 +38,8 @@ const App = () => {
           </Navigation>
         </BrowserRouter>
       </SnackbarProvider>
-    </div>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 

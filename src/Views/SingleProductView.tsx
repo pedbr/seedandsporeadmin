@@ -12,7 +12,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import { ProductType } from '../types/products'
 import ProductForm from '../components/Products/ProductForm'
-import useStore from '../store'
 import DeleteDialog from '../components/Dialogs/DeleteDialog'
 import { useDeleteById } from '../hooks/useDeleteById'
 import useFetchById from '../hooks/useFetchById'
@@ -23,7 +22,6 @@ const SingleProductView = () => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const refetchSingleProduct = useStore((state) => state.refetchSingleProduct)
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen)
 
@@ -32,10 +30,10 @@ const SingleProductView = () => {
   }
 
   const {
-    item,
-    isFetching,
+    data,
+    isLoading,
     error: errorFetching,
-  } = useFetchById<ProductType>('/products', id, refetchSingleProduct)
+  } = useFetchById<ProductType>(`product-${id}`, '/products', id || '')
 
   const {
     handleDeleteById,
@@ -53,7 +51,7 @@ const SingleProductView = () => {
     }
   }
 
-  if (isFetching) return <div>Loading...</div>
+  if (isLoading) return <div>Loading...</div>
 
   if (errorFetching) return <div>An error occurred</div>
 
@@ -79,33 +77,33 @@ const SingleProductView = () => {
         </Stack>
         <Stack direction={'row'} spacing={2}>
           <img
-            src={item?.imageUrl || PRODUCT_DEFAULT_IMAGE}
+            src={data?.imageUrl || PRODUCT_DEFAULT_IMAGE}
             alt={'Product'}
             style={{ height: 300, width: 300, objectFit: 'cover' }}
           />
           <Stack spacing={4}>
-            <Typography variant={'h4'}>{item?.name}</Typography>
-            <Typography variant={'body2'}>{item?.description}</Typography>
+            <Typography variant={'h4'}>{data?.name}</Typography>
+            <Typography variant={'body2'}>{data?.description}</Typography>
             <Typography
               fontWeight={500}
               variant='caption'
               color='text.secondary'
             >
-              {`Stock: ${item?.stock} units`}
+              {`Stock: ${data?.stock} units`}
             </Typography>
             <Typography
               fontWeight={500}
               variant='caption'
               color='text.secondary'
             >
-              {`Price: ${item?.price} EUR`}
+              {`Price: ${data?.price} EUR`}
             </Typography>
             <Typography
               fontWeight={500}
               variant='caption'
               color='text.secondary'
             >
-              {`Price: ${item?.weight} grams`}
+              {`Price: ${data?.weight} grams`}
             </Typography>
           </Stack>
         </Stack>
@@ -113,7 +111,7 @@ const SingleProductView = () => {
       <DeleteDialog
         open={open}
         toggleDialog={toggleDeleteDialog}
-        entity={item?.name || ''}
+        entity={data?.name || ''}
         entityType={'product'}
         onDelete={handleDelete}
         isDeleting={isDeleting}
@@ -129,7 +127,7 @@ const SingleProductView = () => {
           },
         })}
       >
-        <ProductForm editMode defaultValues={item} onSubmit={toggleDrawer} />
+        <ProductForm editMode defaultValues={data} onSubmit={toggleDrawer} />
       </Drawer>
     </>
   )

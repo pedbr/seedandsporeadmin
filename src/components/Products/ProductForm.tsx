@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Button, Grid, Stack, TextField, Typography } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 
 import UploadImage from '../UploadImage'
-import useStore from '../../store'
 import { ProductType } from '../../types/products'
 import useCreateData from '../../hooks/useCreateData'
 import useEditData from '../../hooks/useEditData'
@@ -18,12 +18,7 @@ const ProductForm = ({
   defaultValues,
   editMode,
 }: ProductFormProps) => {
-  const triggerRefetchProducts = useStore(
-    (state) => state.triggerRefetchProducts
-  )
-  const triggerRefetchSingleProduct = useStore(
-    (state) => state.triggerRefetchSingleProduct
-  )
+  const queryClient = useQueryClient()
   const [name, setName] = useState<string>(defaultValues?.name || '')
   const [description, setDescription] = useState<string>(
     defaultValues?.description || ''
@@ -56,7 +51,7 @@ const ProductForm = ({
       weight,
     })
     if (!error) {
-      triggerRefetchProducts()
+      queryClient.invalidateQueries(['products'])
       onSubmit()
     }
   }
@@ -67,7 +62,7 @@ const ProductForm = ({
       defaultValues?.id
     )
     if (!editingError) {
-      triggerRefetchSingleProduct()
+      queryClient.invalidateQueries([`product-${defaultValues?.id}`])
       onSubmit()
     }
   }

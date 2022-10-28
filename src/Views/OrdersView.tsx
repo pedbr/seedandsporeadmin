@@ -3,9 +3,12 @@ import useFetchData from '../hooks/useFetchData'
 import { OrderType } from '../types/orders'
 
 const ProductsView = () => {
-  const { data, isFetching, error } = useFetchData<OrderType>('/orders')
+  const { data, isLoading, error } = useFetchData<OrderType[]>(
+    'orders',
+    '/orders'
+  )
 
-  if (isFetching) return <Box>{'Loading...'}</Box>
+  if (isLoading) return <Box>{'Loading...'}</Box>
 
   if (error) return <Box>{'An error ocurred...'}</Box>
 
@@ -15,7 +18,7 @@ const ProductsView = () => {
         <Typography variant='h5'>Orders View</Typography>
       </Stack>
       <Grid container spacing={2} p={2}>
-        {data.map((order) => (
+        {data?.map((order) => (
           <Grid item xs={12} key={order.id}>
             <Stack>
               <Typography variant='body1'>{order.id}</Typography>

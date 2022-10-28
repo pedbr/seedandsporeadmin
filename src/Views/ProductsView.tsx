@@ -1,7 +1,6 @@
 import { Box, Button, Drawer, Grid, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
 
-import useStore from '../store'
 import useFetchData from '../hooks/useFetchData'
 import { ProductType } from '../types/products'
 import ProductCard from '../components/Products/ProductCard'
@@ -9,16 +8,15 @@ import ProductForm from '../components/Products/ProductForm'
 
 const ProductsView = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const refetchProducts = useStore((state) => state.refetchProducts)
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen)
 
-  const { data, isFetching, error } = useFetchData<ProductType>(
-    '/products',
-    refetchProducts
+  const { data, isLoading, error } = useFetchData<ProductType[]>(
+    'products',
+    '/products'
   )
 
-  if (isFetching) return <Box>{'Loading...'}</Box>
+  if (isLoading) return <Box>{'Loading...'}</Box>
 
   if (error) return <Box>{'An error ocurred...'}</Box>
 
@@ -33,7 +31,7 @@ const ProductsView = () => {
         </Stack>
       </Box>
       <Grid container spacing={2} p={2}>
-        {data.map((product) => (
+        {data?.map((product) => (
           <Grid item xs={12} key={product.id}>
             <ProductCard {...product} />
           </Grid>

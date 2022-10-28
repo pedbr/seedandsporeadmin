@@ -1,38 +1,33 @@
-import { useCallback, useEffect, useState } from 'react'
 import { useSnackbar } from 'notistack'
+import { useQuery } from '@tanstack/react-query'
 
 import { api } from '../api'
 
-function useFetchData<T>(endpoint: string, refetch?: number) {
-  const [data, setData] = useState<T[]>([])
-  const [error, setError] = useState<unknown | undefined>()
-  const [isFetching, setIsFetching] = useState(false)
+export async function fetchData<T>(endpoint: string): Promise<T> {
+  const res = await api.get(endpoint)
+  return res?.data
+}
+
+export function useFetchData<T>(
+  key: string,
+  endpoint: string,
+  queryOptions?: {}
+) {
   const { enqueueSnackbar } = useSnackbar()
 
-  const fetchProducts = useCallback(async () => {
-    setIsFetching(true)
-    try {
-      const { data, status } = await api.get(endpoint)
-      if (status === 200) {
-        setData(data)
-      } else {
-        throw new Error(data?.message)
-      }
-    } catch (error) {
-      setError(error)
-      enqueueSnackbar('There was an error fetching data', {
-        variant: 'error',
-      })
-    } finally {
-      setIsFetching(false)
-    }
-  }, [enqueueSnackbar, endpoint])
+  const { data, isLoading, error, isFetching, isError, refetch } = useQuery<T>(
+    [key],
+    () => fetchData(endpoint),
+    queryOptions
+  )
 
-  useEffect(() => {
-    fetchProducts()
-  }, [refetch, fetchProducts])
+  if (isError) {
+    enqueueSnackbar('There was an error fetching data', {
+      variant: 'error',
+    })
+  }
 
-  return { data, isFetching, error }
+  return { data, isFetching, error, isLoading, refetch }
 }
 
 export default useFetchData
