@@ -4,7 +4,7 @@ export interface ProductType {
   name: string
   stock: number
   price: number
-  imageUrl: string
+  imageUrl?: string
   description: string
   available: boolean
   weight: number

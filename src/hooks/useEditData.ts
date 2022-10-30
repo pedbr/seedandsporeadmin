@@ -1,36 +1,34 @@
-import { useState } from 'react'
 import { useSnackbar } from 'notistack'
+import { useMutation } from '@tanstack/react-query'
 
 import { api } from '../api'
 
-const useEditData = (endpoint: string) => {
-  const [isEditing, setEditing] = useState(false)
-  const [error, setError] = useState<unknown | undefined>()
+function useEditData<T>(endpoint: string, targetId: string) {
+  const {
+    mutate: edit,
+    mutateAsync: editAsync,
+    isError,
+    error,
+    isLoading,
+    isSuccess,
+  } = useMutation((object: T) => {
+    return api.patch(`${endpoint}/${targetId}`, object)
+  })
   const { enqueueSnackbar } = useSnackbar()
 
-  const handleEditData = async (newObject: unknown, targetId?: string) => {
-    setEditing(true)
-    try {
-      const { status, data } = await api.patch(
-        `${endpoint}/${targetId}`,
-        newObject
-      )
-      if (status === 200) {
-        enqueueSnackbar('Item edited successfully!', { variant: 'success' })
-      } else {
-        throw new Error(data?.message)
-      }
-    } catch (error) {
-      setError(error)
-      enqueueSnackbar('There was an error editing this item', {
-        variant: 'error',
-      })
-    } finally {
-      setEditing(false)
-    }
+  console.log('rendering')
+
+  if (isError) {
+    enqueueSnackbar('There was an error editing this item', {
+      variant: 'error',
+    })
   }
 
-  return { handleEditData, isEditing, error }
+  if (isSuccess) {
+    enqueueSnackbar('Item edited successfully!', { variant: 'success' })
+  }
+
+  return { edit, editAsync, isLoading, error, isError }
 }
 
 export default useEditData

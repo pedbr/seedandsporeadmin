@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { Button, Grid, Stack, TextField, Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
 
 import UploadImage from '../UploadImage'
 import { ProductType } from '../../types/products'
@@ -14,34 +14,25 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({
-  onSubmit,
+  onSubmit: onSubmitCallback,
   defaultValues,
   editMode,
 }: ProductFormProps) => {
   const queryClient = useQueryClient()
-  const [name, setName] = useState<string>(defaultValues?.name || '')
-  const [description, setDescription] = useState<string>(
-    defaultValues?.description || ''
-  )
-  const [price, setPrice] = useState<number>(defaultValues?.price || 0)
-  const [stock, setStock] = useState<number>(defaultValues?.stock || 0)
-  const [weight, setWeight] = useState<number>(defaultValues?.weight || 0)
-  const [imageUrl, setImageUrl] = useState<string | undefined>(
-    defaultValues?.imageUrl
-  )
+  const { handleSubmit, register } = useForm<ProductType>({ defaultValues })
+
+  console.log('rendering form')
 
   const { handleCreateData, isCreating, error } = useCreateData('/products')
 
   const {
-    handleEditData,
-    isEditing,
+    editAsync,
+    isLoading: isEditing,
     error: editingError,
-  } = useEditData('products')
+  } = useEditData<Partial<ProductType>>('/products', defaultValues?.id || '')
 
-  const missingFields = !name || !price || !stock
-
-  const handleSubmit = async () => {
-    console.log('here')
+  const onSubmit = async (values: ProductType) => {
+    const { name, description, price, stock, imageUrl, weight } = values
     await handleCreateData({
       name,
       description,
@@ -52,104 +43,106 @@ const ProductForm = ({
     })
     if (!error) {
       queryClient.invalidateQueries(['products'])
-      onSubmit()
+      onSubmitCallback()
     }
   }
 
-  const handleEdit = async () => {
-    await handleEditData(
-      { name, description, price, stock, imageUrl, weight },
-      defaultValues?.id
-    )
+  const onEdit = async (values: ProductType) => {
+    const { name, description, price, stock, imageUrl, weight } = values
+    await editAsync({
+      name,
+      description,
+      price,
+      stock,
+      imageUrl,
+      weight,
+    })
     if (!editingError) {
       queryClient.invalidateQueries([`product-${defaultValues?.id}`])
-      onSubmit()
+      onSubmitCallback()
     }
   }
 
   return (
-    <Stack height={'100%'} justifyContent={'space-between'}>
-      <Grid container spacing={3} p={2}>
-        <Grid item xs={12}>
-          <Typography variant={'h5'}>
-            {editMode ? `Edit product` : `Create new product`}
-          </Typography>
+    <form onSubmit={handleSubmit(editMode ? onEdit : onSubmit)}>
+      <Stack height={'100%'} justifyContent={'space-between'}>
+        <Grid container spacing={3} p={2}>
+          <Grid item xs={12}>
+            <Typography variant={'h5'}>
+              {editMode ? `Edit product` : `Create new product`}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label={'Name'}
+              required
+              {...register('name', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label={'Description'}
+              multiline
+              {...register('description')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              fullWidth
+              label={'Price (EUR)'}
+              type={'number'}
+              {...register('price', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              fullWidth
+              label={'Stock (units)'}
+              type={'number'}
+              {...register('stock', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              fullWidth
+              label={'Weight (grams)'}
+              type={'number'}
+              {...register('weight', { required: true })}
+            />
+          </Grid>
+          {/* <Grid item xs={12}>
+            <UploadImage
+              size={300}
+              imageUrl={imageUrl || defaultValues?.imageUrl}
+              onUpload={(url) => {
+                setImageUrl(url)
+              }}
+            />
+          </Grid> */}
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            fullWidth
-            label={'Name'}
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label={'Description'}
-            multiline
-            onChange={(e) => setDescription(e.target.value)}
-            value={description}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            fullWidth
-            type={'number'}
-            label={'Price (EUR)'}
-            onChange={(e) => setPrice(Number(e.target.value))}
-            value={price}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            fullWidth
-            type={'number'}
-            label={'Stock (units)'}
-            onChange={(e) => setStock(Number(e.target.value))}
-            value={stock}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            fullWidth
-            type={'number'}
-            label={'Weight (grams)'}
-            onChange={(e) => setWeight(Number(e.target.value))}
-            value={weight}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <UploadImage
-            size={300}
-            imageUrl={imageUrl || defaultValues?.imageUrl}
-            onUpload={(url) => {
-              setImageUrl(url)
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Stack direction={'row'} justifyContent={'space-between'} p={2}>
-        <Button
-          disabled={isEditing || isCreating}
-          onClick={() => onSubmit()}
-          variant={'outlined'}
-        >
-          Cancel
-        </Button>
-        <Button
-          disabled={missingFields || isEditing || isCreating}
-          onClick={() => (editMode ? handleEdit() : handleSubmit())}
-          variant={'contained'}
-        >
-          {editMode ? `Edit product` : `Create product`}
-        </Button>
+        <Stack direction={'row'} justifyContent={'space-between'} p={2}>
+          <Button
+            disabled={isEditing || isCreating}
+            onClick={() => onSubmitCallback()}
+            variant={'outlined'}
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={isEditing || isCreating}
+            type={'submit'}
+            variant={'contained'}
+          >
+            {editMode ? `Edit product` : `Create product`}
+          </Button>
+        </Stack>
       </Stack>
-    </Stack>
+    </form>
   )
 }
 
