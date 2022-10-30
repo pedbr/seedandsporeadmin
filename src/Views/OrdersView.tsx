@@ -1,9 +1,10 @@
 import { Box, Grid, Stack, Typography } from '@mui/material'
+import OrderCard from '../components/Orders/OrderCard'
 import useFetchData from '../hooks/useFetchData'
 import { OrderType } from '../types/orders'
 
 const ProductsView = () => {
-  const { data, isLoading, error } = useFetchData<OrderType[]>(
+  const { data, isLoading, error } = useFetchData<OrderType>(
     'orders',
     '/orders'
   )
@@ -20,11 +21,11 @@ const ProductsView = () => {
       <Grid container spacing={2} p={2}>
         {data?.map((order) => (
           <Grid item xs={12} key={order.id}>
-            <Stack>
-              <Typography variant='body1'>{order.id}</Typography>
-              <Typography variant='body2'>{order.totalPrice}</Typography>
-              <Typography variant='caption'>{order.status}</Typography>
-            </Stack>
+            <OrderCard
+              id={order.id}
+              totalPrice={order.totalPrice}
+              status={order.status}
+            />
           </Grid>
         ))}
       </Grid>

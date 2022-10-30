@@ -11,7 +11,7 @@ const ProductsView = () => {
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen)
 
-  const { data, isLoading, error } = useFetchData<ProductType[]>(
+  const { data, isLoading, error } = useFetchData<ProductType>(
     'products',
     '/products'
   )

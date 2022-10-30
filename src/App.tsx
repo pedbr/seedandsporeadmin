@@ -11,6 +11,7 @@ import DashboardView from './Views/DashboardView'
 import ProductsView from './Views/ProductsView'
 import SingleProductView from './Views/SingleProductView'
 import OrdersView from './Views/OrdersView'
+import SingleOrderView from './Views/SingleOrderView'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,7 @@ const App = () => {
               <Route path='/products' element={<ProductsView />} />
               <Route path='/product/:id' element={<SingleProductView />} />
               <Route path='/orders' element={<OrdersView />} />
+              <Route path='/orders/:id' element={<SingleOrderView />} />
               <Route path='/categories' element={<CategoriesView />} />
               <Route path='/campaigns' element={<CampaignsView />} />
               <Route path='/account' element={<AccountView />} />
