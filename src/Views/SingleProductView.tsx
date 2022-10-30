@@ -9,17 +9,27 @@ import {
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { useSnackbar } from 'notistack'
 
 import { ProductType } from '../types/products'
 import ProductForm from '../components/Products/ProductForm'
 import DeleteDialog from '../components/Dialogs/DeleteDialog'
-import { useDeleteById } from '../hooks/useDeleteById'
 import useFetchById from '../hooks/useFetchById'
 import { PRODUCT_DEFAULT_IMAGE } from '../constants'
+import { api } from '../api'
 
 const SingleProductView = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const {
+    mutateAsync: deleteAsync,
+    isError: isDeletingError,
+    isLoading: isDeleting,
+  } = useMutation(() => {
+    return api.delete(`/products/${id}`)
+  })
+  const { enqueueSnackbar } = useSnackbar()
   const [open, setOpen] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
@@ -35,18 +45,19 @@ const SingleProductView = () => {
     error: errorFetching,
   } = useFetchById<ProductType>(`product-${id}`, '/products', id || '')
 
-  const {
-    handleDeleteById,
-    isDeleting,
-    error: errorDeleting,
-  } = useDeleteById('products')
-
   const handleDelete = async () => {
     if (id) {
-      await handleDeleteById(id)
-      if (!errorDeleting) {
+      await deleteAsync()
+      if (!isDeletingError) {
         navigate('/products')
+        enqueueSnackbar('This item was successfully deleted', {
+          variant: 'info',
+        })
         toggleDeleteDialog()
+      } else {
+        enqueueSnackbar('There was an error deleting this item', {
+          variant: 'error',
+        })
       }
     }
   }

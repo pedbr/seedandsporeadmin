@@ -1,11 +1,11 @@
 import { Button, Grid, Stack, TextField, Typography } from '@mui/material'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 
 import UploadImage from '../UploadImage'
 import { ProductType } from '../../types/products'
-import useCreateData from '../../hooks/useCreateData'
-import useEditData from '../../hooks/useEditData'
+import { useSnackbar } from 'notistack'
+import { api } from '../../api'
 
 interface ProductFormProps {
   onSubmit: () => void
@@ -20,20 +20,25 @@ const ProductForm = ({
 }: ProductFormProps) => {
   const queryClient = useQueryClient()
   const { handleSubmit, register } = useForm<ProductType>({ defaultValues })
-
-  console.log('rendering form')
-
-  const { handleCreateData, isCreating, error } = useCreateData('/products')
-
   const {
-    editAsync,
+    mutateAsync: editAsync,
+    isError: isEditingError,
     isLoading: isEditing,
-    error: editingError,
-  } = useEditData<Partial<ProductType>>('/products', defaultValues?.id || '')
+  } = useMutation((object: Partial<ProductType>) => {
+    return api.patch(`/products/${defaultValues?.id || ''}`, object)
+  })
+  const {
+    mutateAsync: createAsync,
+    isError: isCreatingError,
+    isLoading: isCreating,
+  } = useMutation((object: Partial<ProductType>) => {
+    return api.post(`/products`, object)
+  })
+  const { enqueueSnackbar } = useSnackbar()
 
   const onSubmit = async (values: ProductType) => {
     const { name, description, price, stock, imageUrl, weight } = values
-    await handleCreateData({
+    await createAsync({
       name,
       description,
       price,
@@ -41,9 +46,14 @@ const ProductForm = ({
       imageUrl,
       weight,
     })
-    if (!error) {
+    if (!isCreatingError) {
       queryClient.invalidateQueries(['products'])
+      enqueueSnackbar('Product created successfully!', { variant: 'success' })
       onSubmitCallback()
+    } else {
+      enqueueSnackbar('There was an error creating this item', {
+        variant: 'error',
+      })
     }
   }
 
@@ -57,9 +67,14 @@ const ProductForm = ({
       imageUrl,
       weight,
     })
-    if (!editingError) {
+    if (!isEditingError) {
       queryClient.invalidateQueries([`product-${defaultValues?.id}`])
+      enqueueSnackbar('Item edited successfully!', { variant: 'success' })
       onSubmitCallback()
+    } else {
+      enqueueSnackbar('There was an error editing this item', {
+        variant: 'error',
+      })
     }
   }
 

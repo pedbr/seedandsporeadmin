@@ -12,9 +12,10 @@ import {
 
 import { ProductType } from '../../types/products'
 import { PRODUCT_DEFAULT_IMAGE } from '../../constants'
-import useStore from '../../store'
-import { useDeleteById } from '../../hooks/useDeleteById'
 import DeleteDialog from '../Dialogs/DeleteDialog'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from '../../api'
+import { useSnackbar } from 'notistack'
 
 const ProductCard = ({
   id,
@@ -26,21 +27,35 @@ const ProductCard = ({
   weight,
 }: ProductType) => {
   const [open, setOpen] = useState(false)
-  const triggerRefetchProducts = useStore(
-    (state) => state.triggerRefetchProducts
-  )
   const navigate = useNavigate()
-  const { handleDeleteById, isDeleting, error } = useDeleteById('products')
+  const {
+    mutateAsync: deleteAsync,
+    isError: isDeletingError,
+    isLoading: isDeleting,
+  } = useMutation(() => {
+    return api.delete(`/products/${id}`)
+  })
+  const { enqueueSnackbar } = useSnackbar()
+  const queryClient = useQueryClient()
 
   const toggleDeleteDialog = () => {
     setOpen(!open)
   }
 
   const handleDelete = async () => {
-    await handleDeleteById(id)
-    if (!error) {
-      triggerRefetchProducts()
-      toggleDeleteDialog()
+    if (id) {
+      await deleteAsync()
+      if (!isDeletingError) {
+        queryClient.invalidateQueries(['products'])
+        enqueueSnackbar('This item was successfully deleted', {
+          variant: 'info',
+        })
+        toggleDeleteDialog()
+      } else {
+        enqueueSnackbar('There was an error deleting this item', {
+          variant: 'error',
+        })
+      }
     }
   }
 
