@@ -6,6 +6,7 @@ import UploadImage from '../UploadImage'
 import { ProductType } from '../../types/products'
 import { useSnackbar } from 'notistack'
 import { api } from '../../api'
+import { useState } from 'react'
 
 interface ProductFormProps {
   onSubmit: () => void
@@ -19,7 +20,9 @@ const ProductForm = ({
   editMode,
 }: ProductFormProps) => {
   const queryClient = useQueryClient()
+  const { enqueueSnackbar } = useSnackbar()
   const { handleSubmit, register } = useForm<ProductType>({ defaultValues })
+  const [imageUrl, setImageUrl] = useState(defaultValues?.imageUrl)
   const {
     mutateAsync: editAsync,
     isError: isEditingError,
@@ -34,10 +37,9 @@ const ProductForm = ({
   } = useMutation((object: Partial<ProductType>) => {
     return api.post(`/products`, object)
   })
-  const { enqueueSnackbar } = useSnackbar()
 
   const onSubmit = async (values: ProductType) => {
-    const { name, description, price, stock, imageUrl, weight } = values
+    const { name, description, price, stock, weight } = values
     await createAsync({
       name,
       description,
@@ -58,7 +60,7 @@ const ProductForm = ({
   }
 
   const onEdit = async (values: ProductType) => {
-    const { name, description, price, stock, imageUrl, weight } = values
+    const { name, description, price, stock, weight } = values
     await editAsync({
       name,
       description,
@@ -130,7 +132,7 @@ const ProductForm = ({
               {...register('weight', { required: true })}
             />
           </Grid>
-          {/* <Grid item xs={12}>
+          <Grid item xs={12}>
             <UploadImage
               size={300}
               imageUrl={imageUrl || defaultValues?.imageUrl}
@@ -138,7 +140,7 @@ const ProductForm = ({
                 setImageUrl(url)
               }}
             />
-          </Grid> */}
+          </Grid>
         </Grid>
         <Stack direction={'row'} justifyContent={'space-between'} p={2}>
           <Button
