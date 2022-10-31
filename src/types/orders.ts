@@ -27,4 +27,5 @@ export interface OrderType {
   deliveredAt: string
   returned: boolean
   returnId: string
+  orderWeight: number
 }

@@ -25,6 +25,8 @@ const ProductsView = () => {
               id={order.id}
               totalPrice={order.totalPrice}
               status={order.status}
+              createdAt={order.createdAt}
+              orderWeight={order.orderWeight}
             />
           </Grid>
         ))}

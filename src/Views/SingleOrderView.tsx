@@ -34,7 +34,7 @@ const SingleOrderView = () => {
     mutateAsync: editAsync,
     isError: isEditingError,
     isLoading: isEditing,
-  } = useMutation((object: OrderType) => {
+  } = useMutation((object: { status: Status }) => {
     return api.patch(`/orders/${id}`, object)
   })
 
@@ -43,7 +43,7 @@ const SingleOrderView = () => {
   if (errorFetching || !data) return <div>An error occurred</div>
 
   const handleChange = async (event: SelectChangeEvent) => {
-    await editAsync({ ...data, status: event.target.value as Status })
+    await editAsync({ status: event.target.value as Status })
 
     if (isEditingError) {
       enqueueSnackbar('There was an error updating the order status', {
@@ -86,6 +86,12 @@ const SingleOrderView = () => {
         <Stack spacing={4}>
           <Typography variant={'h4'}>{data?.id}</Typography>
           <Typography variant={'body2'}>{data?.totalPrice}</Typography>
+          <Typography variant='caption'>
+            Created At {data?.createdAt}
+          </Typography>
+          <Typography variant='caption'>
+            Total Weight {data?.orderWeight}
+          </Typography>
           <Typography fontWeight={500} variant='caption' color='text.secondary'>
             Products
           </Typography>

@@ -38,7 +38,7 @@ const ProductForm = ({
     return api.post(`/products`, object)
   })
 
-  const onSubmit = async (values: ProductType) => {
+  const onCreate = async (values: ProductType) => {
     const { name, description, price, stock, weight } = values
     await createAsync({
       name,
@@ -81,7 +81,7 @@ const ProductForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(editMode ? onEdit : onSubmit)}>
+    <form onSubmit={handleSubmit(editMode ? onEdit : onCreate)}>
       <Stack height={'100%'} justifyContent={'space-between'}>
         <Grid container spacing={3} p={2}>
           <Grid item xs={12}>
