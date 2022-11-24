@@ -28,4 +28,11 @@ export interface OrderType {
   returned: boolean
   returnId: string
   orderWeight: number
+  orderFullName: string
+  orderEmail: string
+  orderPhoneNumber: string
+  orderDeliveryAddress: string
+  orderDeliveryPostCode: string
+  orderDeliveryLocation: string
+  orderBillingAddress: string
 }

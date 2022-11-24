@@ -87,10 +87,31 @@ const SingleOrderView = () => {
           <Typography variant={'h4'}>{data?.id}</Typography>
           <Typography variant={'body2'}>{data?.totalPrice}</Typography>
           <Typography variant='caption'>
-            Created At {data?.createdAt}
+            Created At: {data?.createdAt}
           </Typography>
           <Typography variant='caption'>
-            Total Weight {data?.orderWeight}
+            Total Weight: {data?.orderWeight}
+          </Typography>
+          <Typography variant='caption'>
+            Client name: {data?.orderFullName}
+          </Typography>
+          <Typography variant='caption'>
+            Client email: {data?.orderEmail}
+          </Typography>
+          <Typography variant='caption'>
+            Client phone number: {data?.orderPhoneNumber}
+          </Typography>
+          <Typography variant='caption'>
+            Delivery Address: {data?.orderDeliveryAddress}
+          </Typography>
+          <Typography variant='caption'>
+            Delivery post code: {data?.orderDeliveryPostCode}
+          </Typography>
+          <Typography variant='caption'>
+            Delivery Location: {data?.orderDeliveryLocation}
+          </Typography>
+          <Typography variant='caption'>
+            Billing address: {data?.orderBillingAddress}
           </Typography>
           <Typography fontWeight={500} variant='caption' color='text.secondary'>
             Products

@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
@@ -17,10 +16,6 @@ Sentry.init({
 })
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
+root.render(<App />)
 
 reportWebVitals()

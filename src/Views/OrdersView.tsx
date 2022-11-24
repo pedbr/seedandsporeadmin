@@ -9,6 +9,8 @@ const ProductsView = () => {
     '/orders'
   )
 
+  console.log('orders', data)
+
   if (isLoading) return <Box>{'Loading...'}</Box>
 
   if (error) return <Box>{'An error ocurred...'}</Box>
