@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { styled, Theme, CSSObject } from '@mui/material/styles'
 import {
   Box,
@@ -9,6 +9,7 @@ import {
   Typography,
   Divider,
   IconButton,
+  Button,
 } from '@mui/material'
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -21,6 +22,8 @@ import SellIcon from '@mui/icons-material/Sell'
 import ViewComfyIcon from '@mui/icons-material/ViewComfy'
 
 import NavigationItem from './NavigationItem'
+import { AuthContext } from '../../context/AuthContext'
+import { auth } from '../../api/firebase'
 
 const drawerWidth = 240
 
@@ -99,6 +102,7 @@ interface NavigationProps {
 
 const Navigation = ({ children }: NavigationProps) => {
   const [open, setOpen] = useState(false)
+  const user = useContext(AuthContext)
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -106,6 +110,10 @@ const Navigation = ({ children }: NavigationProps) => {
 
   const handleDrawerClose = () => {
     setOpen(false)
+  }
+
+  const signOut = async () => {
+    await auth.signOut()
   }
 
   return (
@@ -128,6 +136,11 @@ const Navigation = ({ children }: NavigationProps) => {
           <Typography variant='h6' noWrap component='div'>
             Seed and Spore Admin
           </Typography>
+          {user && (
+            <Button onClick={signOut} color={'secondary'} variant={'contained'}>
+              Sign out
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>
