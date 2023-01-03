@@ -92,17 +92,33 @@ const ProductForm = ({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label={'Name'}
+              label={'Name (PT)'}
               required
-              {...register('name', { required: true })}
+              {...register('name.pt', { required: true })}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label={'Description'}
+              label={'Name (EN)'}
+              required
+              {...register('name.en', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label={'Description (PT)'}
               multiline
-              {...register('description')}
+              {...register('description.pt')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label={'Description (EN)'}
+              multiline
+              {...register('description.en')}
             />
           </Grid>
           <Grid item xs={12}>

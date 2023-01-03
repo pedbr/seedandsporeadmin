@@ -1,11 +1,17 @@
 export interface ProductType {
   id: string
   createdAt: number
-  name: string
+  name?: {
+    en: string
+    pt: string
+  }
+  description?: {
+    en: string
+    pt: string
+  }
   stock: number
   price: number
   imageUrl?: string
-  description: string
   available: boolean
   weight: number
   categoryId?: number

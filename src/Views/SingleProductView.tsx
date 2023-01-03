@@ -93,8 +93,8 @@ const SingleProductView = () => {
             style={{ height: 300, width: 300, objectFit: 'cover' }}
           />
           <Stack spacing={4}>
-            <Typography variant={'h4'}>{data?.name}</Typography>
-            <Typography variant={'body2'}>{data?.description}</Typography>
+            <Typography variant={'h4'}>{data?.name?.en}</Typography>
+            <Typography variant={'body2'}>{data?.description?.en}</Typography>
             <Typography
               fontWeight={500}
               variant='caption'
@@ -122,7 +122,7 @@ const SingleProductView = () => {
       <DeleteDialog
         open={open}
         toggleDialog={toggleDeleteDialog}
-        entity={data?.name || ''}
+        entity={data?.name?.en || ''}
         entityType={'product'}
         onDelete={handleDelete}
         isDeleting={isDeleting}

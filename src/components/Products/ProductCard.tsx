@@ -85,10 +85,10 @@ const ProductCard = ({
         >
           <CardContent>
             <Typography gutterBottom variant='h5' component='div'>
-              {name}
+              {name?.en}
             </Typography>
             <Typography variant='body2' color='text.secondary'>
-              {description}
+              {description?.en}
             </Typography>
             <Stack direction={'row'} spacing={4} mt={2}>
               <Typography
@@ -140,7 +140,7 @@ const ProductCard = ({
       <DeleteDialog
         open={open}
         toggleDialog={toggleDeleteDialog}
-        entity={name}
+        entity={name?.en || ''}
         entityType={'product'}
         onDelete={handleDelete}
         isDeleting={isDeleting}
