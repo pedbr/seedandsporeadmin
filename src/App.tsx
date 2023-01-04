@@ -4,6 +4,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import AuthProvider from './context/AuthContext'
 import AppContainer from './AppContainer'
+import { ThemeProvider } from '@mui/material'
+import { theme } from './theme'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,11 +18,14 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <SnackbarProvider>
-        <AuthProvider>
-          <AppContainer />
-        </AuthProvider>
-      </SnackbarProvider>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider>
+          <AuthProvider>
+            <AppContainer />
+          </AuthProvider>
+        </SnackbarProvider>
+      </ThemeProvider>
+
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )

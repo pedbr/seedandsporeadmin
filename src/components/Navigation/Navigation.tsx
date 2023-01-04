@@ -6,26 +6,25 @@ import {
   Toolbar,
   List,
   CssBaseline,
-  Typography,
-  Divider,
   IconButton,
-  Button,
+  useTheme,
+  Typography,
 } from '@mui/material'
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import CampaignIcon from '@mui/icons-material/Campaign'
-import SellIcon from '@mui/icons-material/Sell'
+// import CampaignIcon from '@mui/icons-material/Campaign'
+// import SellIcon from '@mui/icons-material/Sell'
 import ViewComfyIcon from '@mui/icons-material/ViewComfy'
 
 import NavigationItem from './NavigationItem'
 import { AuthContext } from '../../context/AuthContext'
-import { auth } from '../../api/firebase'
+import Logo from '../Logo'
+import AccountMenu from '../AccountMenu'
 
-const drawerWidth = 240
+const drawerWidth = 200
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -34,6 +33,8 @@ const openedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
+  borderRight: 'none',
+  boxShadow: theme.shadows[10],
 })
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -46,13 +47,14 @@ const closedMixin = (theme: Theme): CSSObject => ({
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
+  borderRight: 'none',
+  boxShadow: theme.shadows[10],
 })
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(1, 3),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }))
@@ -86,6 +88,7 @@ const Drawer = styled(MuiDrawer, {
   flexShrink: 0,
   whiteSpace: 'nowrap',
   boxSizing: 'border-box',
+  boxShadow: theme.shadows[10],
   ...(open && {
     ...openedMixin(theme),
     '& .MuiDrawer-paper': openedMixin(theme),
@@ -102,54 +105,45 @@ interface NavigationProps {
 
 const Navigation = ({ children }: NavigationProps) => {
   const [open, setOpen] = useState(false)
+  const { palette } = useTheme()
   const user = useContext(AuthContext)
 
-  const handleDrawerOpen = () => {
-    setOpen(true)
-  }
-
-  const handleDrawerClose = () => {
-    setOpen(false)
-  }
-
-  const signOut = async () => {
-    await auth.signOut()
-  }
-
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }} height={'100vh'}>
       <CssBaseline />
-      <AppBar position='fixed' open={open}>
+      <AppBar color='transparent' elevation={0} position='fixed' open={open}>
         <Toolbar>
+          <Box sx={{ ...(open && { display: 'none' }) }}>
+            <Logo sx={{ ml: -1 }} />
+          </Box>
           <IconButton
-            color='inherit'
-            aria-label='open drawer'
-            onClick={handleDrawerOpen}
+            onClick={() => setOpen(!open)}
             edge='start'
             sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
+              ...(!open && { marginLeft: 4 }),
             }}
           >
-            <MenuIcon />
+            {!open ? <MenuIcon /> : <ChevronLeftIcon />}
           </IconButton>
-          <Typography variant='h6' noWrap component='div'>
-            Seed and Spore Admin
-          </Typography>
-          {user && (
-            <Button onClick={signOut} color={'secondary'} variant={'contained'}>
-              Sign out
-            </Button>
-          )}
+          <Box width={'100%'} display={'flex'} justifyContent={'flex-end'}>
+            {user && <AccountMenu />}
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer variant='permanent' open={open}>
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
+          {open && (
+            <>
+              <Logo sx={{ ml: -1, mr: 2 }} />
+              <Typography
+                fontSize={'22px'}
+                fontFamily={'Covered By Your Grace'}
+              >
+                webstor
+              </Typography>
+            </>
+          )}
         </DrawerHeader>
-        <Divider />
         <List>
           <NavigationItem
             open={open}
@@ -169,7 +163,7 @@ const Navigation = ({ children }: NavigationProps) => {
             label={'Orders'}
             navigateTo={'/orders'}
           />
-          <NavigationItem
+          {/* <NavigationItem
             open={open}
             icon={<CampaignIcon />}
             label={'Campaigns'}
@@ -180,19 +174,15 @@ const Navigation = ({ children }: NavigationProps) => {
             icon={<SellIcon />}
             label={'Categories'}
             navigateTo={'/categories'}
-          />
-        </List>
-        <Divider />
-        <List>
-          <NavigationItem
-            open={open}
-            icon={<AccountCircleIcon />}
-            label={'Account Settings'}
-            navigateTo={'/account'}
-          />
+          /> */}
         </List>
       </Drawer>
-      <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        component='main'
+        height={'100%'}
+        sx={{ flexGrow: 1, p: 3 }}
+        bgcolor={palette.grey[50]}
+      >
         <DrawerHeader />
         {children}
       </Box>

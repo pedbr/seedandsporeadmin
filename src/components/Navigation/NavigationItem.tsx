@@ -22,7 +22,7 @@ const NavigationItem = ({
   const navigate = useNavigate()
 
   return (
-    <ListItem disablePadding sx={{ display: 'block' }}>
+    <ListItem disablePadding sx={{ display: 'block', mt: 6 }}>
       <ListItemButton
         sx={{
           minHeight: 48,
