@@ -1,7 +1,8 @@
 import { useRef } from 'react'
-import { Box, Button, Stack, TextField } from '@mui/material'
+import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { auth } from '../api/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
+import Logo from '../components/Logo'
 
 const LoginView = () => {
   const emailRef = useRef<HTMLInputElement>(null)
@@ -27,13 +28,21 @@ const LoginView = () => {
         justifyContent={'center'}
         alignItems={'center'}
       >
+        <Box display={'flex'}>
+          <Logo sx={{ mr: 1 }} />
+          <Typography fontSize={'22px'} fontFamily={'Covered By Your Grace'}>
+            webstor
+          </Typography>
+        </Box>
         <TextField inputRef={emailRef} label={'Email'} />
         <TextField
           inputRef={passwordRef}
           type={'password'}
           label={'Password'}
         />
-        <Button onClick={handleLogin}>Login</Button>
+        <Button variant={'contained'} onClick={handleLogin}>
+          Login
+        </Button>
       </Stack>
     </Box>
   )
