@@ -4,6 +4,7 @@ import {
   Button,
   Drawer,
   IconButton,
+  Paper,
   Stack,
   Typography,
 } from '@mui/material'
@@ -74,51 +75,103 @@ const SingleProductView = () => {
           <IconButton onClick={() => navigate('/products')}>
             <ArrowBackIcon />
           </IconButton>
-          <Stack direction={'row'} spacing={2}>
-            <Button
-              onClick={toggleDeleteDialog}
-              variant={'outlined'}
-              color={'error'}
-            >
-              Delete
-            </Button>
-            <Button onClick={() => toggleDrawer()} variant={'contained'}>
-              Edit
-            </Button>
-          </Stack>
         </Stack>
-        <Stack direction={'row'} spacing={2}>
-          <img
-            src={data?.imageUrl || PRODUCT_DEFAULT_IMAGE}
-            alt={'Product'}
-            style={{ height: 300, width: 300, objectFit: 'cover' }}
-          />
-          <Stack spacing={4}>
-            <Typography variant={'h4'}>{data?.name?.en}</Typography>
-            <Typography variant={'body2'}>{data?.description?.en}</Typography>
-            <Typography
-              fontWeight={500}
-              variant='caption'
-              color='text.secondary'
-            >
-              {`Stock: ${data?.stock} units`}
-            </Typography>
-            <Typography
-              fontWeight={500}
-              variant='caption'
-              color='text.secondary'
-            >
-              {`Price: ${data?.price} EUR`}
-            </Typography>
-            <Typography
-              fontWeight={500}
-              variant='caption'
-              color='text.secondary'
-            >
-              {`Price: ${data?.weight} grams`}
-            </Typography>
+        <Paper sx={{ borderRadius: '16px', padding: '24px' }}>
+          <Stack direction={'row'} spacing={6} width={'100%'}>
+            <img
+              src={data?.imageUrl || PRODUCT_DEFAULT_IMAGE}
+              alt={'Product'}
+              style={{
+                height: 500,
+                width: 500,
+                objectFit: 'cover',
+                borderRadius: '16px',
+              }}
+            />
+            <Stack justifyContent={'space-between'} width={'100%'}>
+              <Stack>
+                <Box
+                  display={'flex'}
+                  alignItems={'center'}
+                  bgcolor={'success.main'}
+                  px={1}
+                  py={0.5}
+                  borderRadius={2}
+                  width={62}
+                  mb={1}
+                >
+                  <Typography
+                    variant='caption'
+                    color='common.white'
+                    fontWeight={500}
+                  >
+                    In Stock
+                  </Typography>
+                </Box>
+                <Typography variant={'h1'} mb={2}>
+                  {data?.name?.en}
+                </Typography>
+                <Typography variant={'body2'} color={'text.secondary'} mb={4}>
+                  {data?.description?.en}
+                </Typography>
+                <Stack mb={2}>
+                  <Typography
+                    fontWeight={500}
+                    variant='caption'
+                    color='text.secondary'
+                  >
+                    {`Stock`}
+                  </Typography>
+                  <Typography fontWeight={500} variant='h1'>
+                    {`${data?.stock} Units`}
+                  </Typography>
+                </Stack>
+                <Stack mb={2}>
+                  <Typography
+                    fontWeight={500}
+                    variant='caption'
+                    color='text.secondary'
+                  >
+                    {`Price`}
+                  </Typography>
+                  <Typography fontWeight={500} variant='h1'>
+                    {`${data?.price}EUR`}
+                  </Typography>
+                </Stack>
+                <Stack mb={4}>
+                  <Typography
+                    fontWeight={500}
+                    variant='caption'
+                    color='text.secondary'
+                  >
+                    {`Weight`}
+                  </Typography>
+                  <Typography fontWeight={500} variant='h1'>
+                    {`${data?.weight}G`}
+                  </Typography>
+                </Stack>
+              </Stack>
+
+              <Stack direction={'row'} spacing={2} width={'70%'}>
+                <Button
+                  fullWidth
+                  onClick={toggleDeleteDialog}
+                  variant={'outlined'}
+                  color={'error'}
+                >
+                  Delete
+                </Button>
+                <Button
+                  fullWidth
+                  onClick={() => toggleDrawer()}
+                  variant={'contained'}
+                >
+                  Edit
+                </Button>
+              </Stack>
+            </Stack>
           </Stack>
-        </Stack>
+        </Paper>
       </Box>
       <DeleteDialog
         open={open}

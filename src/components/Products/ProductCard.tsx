@@ -81,7 +81,7 @@ const ProductCard = ({
               <Typography gutterBottom variant='h5' component='div'>
                 {name?.en}
               </Typography>
-              <Stack direction={'row'} justifyContent={'space-between'} mt={2}>
+              <Stack direction={'row'} justifyContent={'space-between'} mt={4}>
                 <Box
                   bgcolor={'secondary.main'}
                   px={1}
