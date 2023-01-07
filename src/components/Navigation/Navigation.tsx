@@ -23,6 +23,7 @@ import NavigationItem from './NavigationItem'
 import { AuthContext } from '../../context/AuthContext'
 import Logo from '../Logo'
 import AccountMenu from '../AccountMenu'
+import { useLocation } from 'react-router-dom'
 
 const drawerWidth = 200
 
@@ -43,9 +44,9 @@ const closedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  width: `calc(${theme.spacing(11)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(11)} + 1px)`,
   },
   borderRight: 'none',
   boxShadow: theme.shadows[10],
@@ -106,6 +107,7 @@ interface NavigationProps {
 const Navigation = ({ children }: NavigationProps) => {
   const [open, setOpen] = useState(false)
   const { palette } = useTheme()
+  const location = useLocation()
   const user = useContext(AuthContext)
 
   return (
@@ -114,13 +116,13 @@ const Navigation = ({ children }: NavigationProps) => {
       <AppBar color='transparent' elevation={0} position='fixed' open={open}>
         <Toolbar>
           <Box sx={{ ...(open && { display: 'none' }) }}>
-            <Logo sx={{ ml: -1 }} />
+            <Logo />
           </Box>
           <IconButton
             onClick={() => setOpen(!open)}
             edge='start'
             sx={{
-              ...(!open && { marginLeft: 4 }),
+              ...(!open && { marginLeft: 4.5 }),
             }}
           >
             {!open ? <MenuIcon /> : <ChevronLeftIcon />}
@@ -134,7 +136,7 @@ const Navigation = ({ children }: NavigationProps) => {
         <DrawerHeader>
           {open && (
             <>
-              <Logo sx={{ ml: -1, mr: 2 }} />
+              <Logo sx={{ mr: 2 }} />
               <Typography
                 fontSize={'22px'}
                 fontFamily={'Covered By Your Grace'}
@@ -146,20 +148,23 @@ const Navigation = ({ children }: NavigationProps) => {
         </DrawerHeader>
         <List>
           <NavigationItem
+            isActive={location.pathname === '/'}
             open={open}
-            icon={<ViewComfyIcon />}
+            icon={<ViewComfyIcon color='inherit' />}
             label={'Dashboard'}
             navigateTo={'/'}
           />
           <NavigationItem
+            isActive={location.pathname.includes('/products')}
             open={open}
-            icon={<ShoppingBasketIcon />}
+            icon={<ShoppingBasketIcon color='inherit' />}
             label={'Products'}
             navigateTo={'/products'}
           />
           <NavigationItem
+            isActive={location.pathname.includes('/orders')}
             open={open}
-            icon={<AddShoppingCartIcon />}
+            icon={<AddShoppingCartIcon color='inherit' />}
             label={'Orders'}
             navigateTo={'/orders'}
           />
