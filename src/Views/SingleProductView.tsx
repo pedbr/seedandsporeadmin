@@ -18,6 +18,7 @@ import DeleteDialog from '../components/Dialogs/DeleteDialog'
 import useFetchById from '../hooks/useFetchById'
 import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 import { api } from '../api'
+import Loader from '../components/Loader/Loader'
 
 const SingleProductView = () => {
   const { id } = useParams()
@@ -62,7 +63,7 @@ const SingleProductView = () => {
     }
   }
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <Loader />
 
   if (errorFetching) return <div>An error occurred</div>
 

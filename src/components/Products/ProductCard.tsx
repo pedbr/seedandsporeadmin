@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Button,
-  CardActions,
   Card,
   CardContent,
   CardMedia,
   Typography,
   Stack,
+  CardActionArea,
+  Box,
 } from '@mui/material'
 
 import { ProductType } from '../../types/products'
@@ -21,7 +21,6 @@ const ProductCard = ({
   id,
   imageUrl,
   name,
-  description,
   stock,
   price,
   weight,
@@ -63,79 +62,49 @@ const ProductCard = ({
     <>
       <Card
         sx={{
-          display: 'flex',
-          '.MuiCardMedia-root': {
-            width: '140px',
-            minWidth: '140px',
-          },
+          borderRadius: '16px',
         }}
       >
-        <CardMedia
-          component='img'
-          height={'140px'}
-          width={'140px'}
-          image={imageUrl || PRODUCT_DEFAULT_IMAGE}
-          alt='green iguana'
-        />
-
-        <Stack
-          direction={'row'}
-          justifyContent={'space-between'}
-          width={'100%'}
-        >
+        <CardActionArea onClick={() => navigate(`/product/${id}`)}>
+          <CardMedia
+            component='img'
+            image={imageUrl || PRODUCT_DEFAULT_IMAGE}
+          />
           <CardContent>
-            <Typography gutterBottom variant='h5' component='div'>
-              {name?.en}
-            </Typography>
-            <Typography variant='body2' color='text.secondary'>
-              {description?.en}
-            </Typography>
-            <Stack direction={'row'} spacing={4} mt={2}>
+            <Box p={2}>
               <Typography
-                fontWeight={500}
-                variant='caption'
-                color='text.secondary'
+                variant='body2'
+                color={`${stock > 0 ? 'success' : 'error'}.main`}
               >
-                {`Stock: ${stock} Units`}
+                {stock > 0 ? 'In stock' : 'Out of stock'}
               </Typography>
-              <Typography
-                fontWeight={500}
-                variant='caption'
-                color='text.secondary'
-              >
-                {`Price: ${price} EUR`}
+              <Typography gutterBottom variant='h5' component='div'>
+                {name?.en}
               </Typography>
-              <Typography
-                fontWeight={500}
-                variant='caption'
-                color='text.secondary'
-              >
-                {`Weight: ${weight} grams`}
-              </Typography>
-            </Stack>
+              <Stack direction={'row'} justifyContent={'space-between'} mt={2}>
+                <Box
+                  bgcolor={'secondary.main'}
+                  px={1}
+                  py={0.5}
+                  borderRadius={2}
+                >
+                  <Typography
+                    variant='caption'
+                    color='common.black'
+                    fontWeight={700}
+                  >{`${stock} Units`}</Typography>
+                </Box>
+                <Box bgcolor={'primary.main'} px={1} py={0.5} borderRadius={2}>
+                  <Typography
+                    variant='caption'
+                    color='common.white'
+                    fontWeight={700}
+                  >{`${price} EUR`}</Typography>
+                </Box>
+              </Stack>
+            </Box>
           </CardContent>
-          <CardActions sx={{ paddingX: 4 }}>
-            <Stack spacing={2}>
-              <Button
-                onClick={() => navigate(`/product/${id}`)}
-                size='small'
-                color='primary'
-                variant='outlined'
-              >
-                Open
-              </Button>
-              <Button
-                onClick={() => toggleDeleteDialog()}
-                size='small'
-                color='error'
-                variant='outlined'
-                disabled={isDeleting}
-              >
-                Delete
-              </Button>
-            </Stack>
-          </CardActions>
-        </Stack>
+        </CardActionArea>
       </Card>
       <DeleteDialog
         open={open}

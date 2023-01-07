@@ -1,4 +1,5 @@
 import { Box, Grid, Stack, Typography } from '@mui/material'
+import Loader from '../components/Loader/Loader'
 import OrderCard from '../components/Orders/OrderCard'
 import useFetchData from '../hooks/useFetchData'
 import { OrderType } from '../types/orders'
@@ -9,9 +10,7 @@ const ProductsView = () => {
     '/orders'
   )
 
-  console.log('orders', data)
-
-  if (isLoading) return <Box>{'Loading...'}</Box>
+  if (isLoading) return <Loader />
 
   if (error) return <Box>{'An error ocurred...'}</Box>
 

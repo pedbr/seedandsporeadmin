@@ -155,14 +155,14 @@ const Navigation = ({ children }: NavigationProps) => {
             navigateTo={'/'}
           />
           <NavigationItem
-            isActive={location.pathname.includes('/products')}
+            isActive={location.pathname.includes('/product')}
             open={open}
             icon={<ShoppingBasketIcon color='inherit' />}
             label={'Products'}
             navigateTo={'/products'}
           />
           <NavigationItem
-            isActive={location.pathname.includes('/orders')}
+            isActive={location.pathname.includes('/order')}
             open={open}
             icon={<AddShoppingCartIcon color='inherit' />}
             label={'Orders'}
