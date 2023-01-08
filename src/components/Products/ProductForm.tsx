@@ -81,7 +81,10 @@ const ProductForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(editMode ? onEdit : onCreate)}>
+    <form
+      style={{ height: '100%' }}
+      onSubmit={handleSubmit(editMode ? onEdit : onCreate)}
+    >
       <Stack height={'100%'} justifyContent={'space-between'}>
         <Grid container spacing={3} p={2}>
           <Grid item xs={12}>
@@ -121,36 +124,40 @@ const ProductForm = ({
               {...register('description.en')}
             />
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              label={'Price (EUR)'}
-              type={'number'}
-              {...register('price', { required: true })}
-            />
+          <Grid item xs={6}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  label={'Price (EUR)'}
+                  type={'number'}
+                  {...register('price', { required: true })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  label={'Stock (units)'}
+                  type={'number'}
+                  {...register('stock', { required: true })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  label={'Weight (grams)'}
+                  type={'number'}
+                  {...register('weight', { required: true })}
+                />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              label={'Stock (units)'}
-              type={'number'}
-              {...register('stock', { required: true })}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              label={'Weight (grams)'}
-              type={'number'}
-              {...register('weight', { required: true })}
-            />
-          </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <UploadImage
-              size={300}
+              size={250}
               imageUrl={imageUrl || defaultValues?.imageUrl}
               onUpload={(url) => {
                 setImageUrl(url)

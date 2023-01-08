@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
   Box,
   Button,
-  Drawer,
   IconButton,
   Paper,
   Stack,
@@ -20,6 +19,7 @@ import useFetchById from '../hooks/useFetchById'
 import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 import { api } from '../api'
 import Loader from '../components/Loader/Loader'
+import Drawer from '../components/Drawer/Drawer'
 
 const SingleProductView = () => {
   const { id } = useParams()
@@ -181,17 +181,7 @@ const SingleProductView = () => {
         onDelete={handleDelete}
         isDeleting={isDeleting}
       />
-      <Drawer
-        anchor={'right'}
-        open={isDrawerOpen}
-        onClose={() => toggleDrawer()}
-        sx={(theme) => ({
-          zIndex: theme.zIndex.drawer + 2,
-          '.MuiPaper-root': {
-            width: '400px',
-          },
-        })}
-      >
+      <Drawer open={isDrawerOpen} onClose={() => toggleDrawer()}>
         <ProductForm editMode defaultValues={data} onSubmit={toggleDrawer} />
       </Drawer>
     </>

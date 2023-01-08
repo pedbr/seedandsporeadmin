@@ -1,4 +1,4 @@
-import { Box, Button, Drawer, Grid, Stack, Typography } from '@mui/material'
+import { Box, Button, Grid, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
 
 import useFetchData from '../hooks/useFetchData'
@@ -6,6 +6,7 @@ import { ProductType } from '../types/products'
 import ProductCard from '../components/Products/ProductCard'
 import ProductForm from '../components/Products/ProductForm'
 import Loader from '../components/Loader/Loader'
+import Drawer from '../components/Drawer/Drawer'
 
 const ProductsView = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -38,20 +39,7 @@ const ProductsView = () => {
           </Grid>
         ))}
       </Grid>
-      <Drawer
-        anchor={'right'}
-        open={isDrawerOpen}
-        onClose={() => toggleDrawer()}
-        sx={(theme) => ({
-          zIndex: theme.zIndex.drawer + 2,
-          '.MuiPaper-root': {
-            width: '600px',
-            margin: 2,
-            padding: 2,
-            borderRadius: '12px',
-          },
-        })}
-      >
+      <Drawer open={isDrawerOpen} onClose={() => toggleDrawer()}>
         <ProductForm onSubmit={toggleDrawer} />
       </Drawer>
     </>
