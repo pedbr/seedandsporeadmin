@@ -156,7 +156,7 @@ const SingleProductView = () => {
                 <Button
                   fullWidth
                   onClick={toggleDeleteDialog}
-                  variant={'outlined'}
+                  variant={'contained'}
                   color={'error'}
                 >
                   Delete

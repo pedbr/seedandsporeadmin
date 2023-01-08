@@ -79,6 +79,18 @@ export const theme = createTheme({
     secondary: {
       main: '#fbb931',
     },
+    info: {
+      main: '#51aff5',
+    },
+    success: {
+      main: '#57bf95',
+    },
+    warning: {
+      main: '#f6cb47',
+    },
+    error: {
+      main: '#d57178',
+    },
   },
   typography,
   shadows: [

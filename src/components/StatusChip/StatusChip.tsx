@@ -18,25 +18,26 @@ const STATUS_LIST = {
 
 interface StatusChipProps {
   status: string
+  size?: 'small' | 'medium' | undefined
 }
 
-const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
+const StatusChip: React.FC<StatusChipProps> = ({ status, size = 'medium' }) => {
   const getIcon = () => {
     switch (status) {
       case STATUS_LIST.processing:
-        return <HourglassEmptyIcon fontSize='small' />
+        return <HourglassEmptyIcon color='inherit' fontSize='small' />
 
       case STATUS_LIST.pending:
-        return <WarningIcon fontSize='small' />
+        return <WarningIcon color='inherit' fontSize='small' />
 
       case STATUS_LIST.expedited:
-        return <SendIcon fontSize='small' />
+        return <SendIcon color='inherit' fontSize='small' />
 
       case STATUS_LIST.delivered:
-        return <AddHomeIcon fontSize='small' />
+        return <AddHomeIcon color='inherit' fontSize='small' />
 
       case STATUS_LIST.closed:
-        return <CheckCircleIcon fontSize='small' />
+        return <CheckCircleIcon color='inherit' fontSize='small' />
 
       default:
         return <InfoIcon />
@@ -61,7 +62,7 @@ const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
         return 'Closed'
 
       default:
-        return 'Processing'
+        return 'Processing (unpaid)'
     }
   }
 
@@ -81,9 +82,11 @@ const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
 
   return (
     <Chip
+      size={size}
+      sx={({ palette }) => ({ color: palette.common.white })}
       icon={getIcon()}
       label={
-        <Typography fontSize={'12px'} fontWeight={700}>
+        <Typography color={'common.white'} fontSize={'12px'} fontWeight={700}>
           {getLabel()}
         </Typography>
       }

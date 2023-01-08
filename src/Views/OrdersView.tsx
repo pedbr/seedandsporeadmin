@@ -81,15 +81,27 @@ const ProductsView = () => {
               onChangeSearchByStatus(event.target.value as string)
             }
           >
-            <MenuItem value={''}>
+            <MenuItem sx={{ height: 50 }} value={''}>
               <Typography>None</Typography>
             </MenuItem>
-            <MenuItem value={'processing'}>Processing</MenuItem>
-            <MenuItem value={'pending'}>Pending</MenuItem>
-            <MenuItem value={'preparing'}>Preparing</MenuItem>
-            <MenuItem value={'expedited'}>Sent</MenuItem>
-            <MenuItem value={'delivered'}>Delivered</MenuItem>
-            <MenuItem value={'closed'}>Closed</MenuItem>
+            <MenuItem sx={{ height: 50 }} value={'processing'}>
+              <StatusChip size={'small'} status='processing' />
+            </MenuItem>
+            <MenuItem sx={{ height: 50 }} value={'pending'}>
+              <StatusChip size={'small'} status='pending' />
+            </MenuItem>
+            <MenuItem sx={{ height: 50 }} value={'preparing'}>
+              <StatusChip size={'small'} status='preparing' />
+            </MenuItem>
+            <MenuItem sx={{ height: 50 }} value={'expedited'}>
+              <StatusChip size={'small'} status='expedited' />
+            </MenuItem>
+            <MenuItem sx={{ height: 50 }} value={'delivered'}>
+              <StatusChip size={'small'} status='delivered' />
+            </MenuItem>
+            <MenuItem sx={{ height: 50 }} value={'closed'}>
+              <StatusChip size={'small'} status='closed' />
+            </MenuItem>
           </Select>
         </FormControl>
       </Stack>
@@ -97,7 +109,7 @@ const ProductsView = () => {
         sx={{ borderRadius: '16px', padding: 2 }}
         component={Paper}
       >
-        <Table sx={{ minWidth: 650 }}>
+        <Table sx={{ minWidth: 500 }}>
           <TableHead>
             <TableRow>
               <TableCell> </TableCell>
