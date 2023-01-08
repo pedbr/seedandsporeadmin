@@ -15,15 +15,22 @@ export function useFetchData<T>(
 ) {
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data, isLoading, error, isFetching, isError, refetch } = useQuery<
-    T[]
-  >([key], () => fetchData(endpoint), queryOptions)
+  const {
+    data: resultData,
+    isLoading,
+    error,
+    isFetching,
+    isError,
+    refetch,
+  } = useQuery<T[]>([key], () => fetchData(endpoint), queryOptions)
 
   if (isError) {
     enqueueSnackbar('There was an error fetching data', {
       variant: 'error',
     })
   }
+
+  const data = resultData || []
 
   return { data, isFetching, error, isLoading, refetch }
 }

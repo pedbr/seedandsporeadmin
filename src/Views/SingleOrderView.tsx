@@ -75,7 +75,7 @@ const SingleOrderView = () => {
               </MenuItem>
               <MenuItem value={'pending'}>Pending</MenuItem>
               <MenuItem value={'preparing'}>Preparing</MenuItem>
-              <MenuItem value={'expedited'}>Expedited</MenuItem>
+              <MenuItem value={'expedited'}>Sent</MenuItem>
               <MenuItem value={'delivered'}>Delivered</MenuItem>
               <MenuItem value={'closed'}>Closed</MenuItem>
             </Select>
