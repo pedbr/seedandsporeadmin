@@ -1,30 +1,23 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
+  Box,
   Card,
+  CardActionArea,
   CardContent,
   CardMedia,
-  Typography,
   Stack,
-  CardActionArea,
-  Box,
+  Typography,
 } from '@mui/material'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { ProductType } from '../../types/products'
-import { PRODUCT_DEFAULT_IMAGE } from '../../constants'
-import DeleteDialog from '../Dialogs/DeleteDialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../api'
 import { useSnackbar } from 'notistack'
+import { api } from '../../api'
+import { PRODUCT_DEFAULT_IMAGE } from '../../constants'
+import { ProductType } from '../../types/products'
+import DeleteDialog from '../Dialogs/DeleteDialog'
 
-const ProductCard = ({
-  id,
-  imageUrl,
-  name,
-  stock,
-  price,
-  weight,
-}: ProductType) => {
+const ProductCard = ({ id, imageUrl, name, stock, active }: ProductType) => {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const {
@@ -68,6 +61,7 @@ const ProductCard = ({
         <CardActionArea onClick={() => navigate(`/product/${id}`)}>
           <CardMedia
             component='img'
+            height={300}
             image={imageUrl || PRODUCT_DEFAULT_IMAGE}
           />
           <CardContent>
@@ -78,7 +72,12 @@ const ProductCard = ({
               >
                 {stock > 0 ? 'In stock' : 'Out of stock'}
               </Typography>
-              <Typography gutterBottom variant='h5' component='div'>
+              <Typography
+                height={100}
+                gutterBottom
+                variant='h5'
+                component='div'
+              >
                 {name?.en}
               </Typography>
               <Stack direction={'row'} justifyContent={'space-between'} mt={4}>
@@ -94,12 +93,19 @@ const ProductCard = ({
                     fontWeight={700}
                   >{`${stock} Units`}</Typography>
                 </Box>
-                <Box bgcolor={'primary.main'} px={1} py={0.5} borderRadius={2}>
+                <Box
+                  bgcolor={active ? 'primary.main' : 'error.main'}
+                  px={1}
+                  py={0.5}
+                  borderRadius={2}
+                >
                   <Typography
                     variant='caption'
                     color='common.white'
                     fontWeight={700}
-                  >{`${price} EUR`}</Typography>
+                  >
+                    {active ? 'Active' : 'Hidden'}
+                  </Typography>
                 </Box>
               </Stack>
             </Box>

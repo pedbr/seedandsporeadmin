@@ -1,6 +1,7 @@
 export interface ProductType {
   id: string
   createdAt: number
+  active: boolean
   name?: {
     en: string
     pt: string

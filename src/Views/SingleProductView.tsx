@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
   Box,
   Button,
@@ -7,19 +7,19 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSnackbar } from 'notistack'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
-import { ProductType } from '../types/products'
-import ProductForm from '../components/Products/ProductForm'
-import DeleteDialog from '../components/Dialogs/DeleteDialog'
-import useFetchById from '../hooks/useFetchById'
-import { PRODUCT_DEFAULT_IMAGE } from '../constants'
 import { api } from '../api'
-import Loader from '../components/Loader/Loader'
+import DeleteDialog from '../components/Dialogs/DeleteDialog'
 import Drawer from '../components/Drawer/Drawer'
+import Loader from '../components/Loader/Loader'
+import ProductForm from '../components/Products/ProductForm'
+import { PRODUCT_DEFAULT_IMAGE } from '../constants'
+import useFetchById from '../hooks/useFetchById'
+import { ProductType } from '../types/products'
 
 const SingleProductView = () => {
   const { id } = useParams()
@@ -31,9 +31,17 @@ const SingleProductView = () => {
   } = useMutation(() => {
     return api.delete(`/products/${id}`)
   })
+  const {
+    mutateAsync: editAsync,
+    isError: isEditingError,
+    isLoading: isEditing,
+  } = useMutation((object: Partial<ProductType>) => {
+    return api.patch(`/products/${id}`, object)
+  })
   const { enqueueSnackbar } = useSnackbar()
   const [open, setOpen] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const queryClient = useQueryClient()
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen)
 
@@ -64,6 +72,18 @@ const SingleProductView = () => {
     }
   }
 
+  const onChangeStatus = async () => {
+    await editAsync({ active: !data?.active })
+    if (!isEditingError) {
+      queryClient.invalidateQueries([`product-${id}`])
+      enqueueSnackbar('Item edited successfully!', { variant: 'success' })
+    } else {
+      enqueueSnackbar('There was an error editing this item', {
+        variant: 'error',
+      })
+    }
+  }
+
   if (isLoading) return <Loader />
 
   if (errorFetching) return <div>An error occurred</div>
@@ -90,30 +110,65 @@ const SingleProductView = () => {
             />
             <Stack justifyContent={'space-between'} width={'100%'}>
               <Stack>
-                <Box
-                  display={'flex'}
-                  alignItems={'center'}
-                  bgcolor={'success.main'}
-                  px={1}
-                  py={0.5}
-                  borderRadius={2}
-                  width={62}
-                  mb={1}
-                >
-                  <Typography
-                    variant='caption'
-                    color='common.white'
-                    fontWeight={500}
+                <Stack direction={'row'}>
+                  <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    bgcolor={
+                      (data?.stock || 0) > 0 ? 'success.main' : 'error.main'
+                    }
+                    px={1}
+                    py={0.5}
+                    borderRadius={2}
+                    width={(data?.stock || 0) > 0 ? 62 : 90}
+                    mb={1}
+                    mr={1}
                   >
-                    In Stock
-                  </Typography>
-                </Box>
+                    <Typography
+                      variant='caption'
+                      color='common.white'
+                      fontWeight={500}
+                    >
+                      {(data?.stock || 0) > 0 ? 'In Stock' : 'Out of Stock'}
+                    </Typography>
+                  </Box>
+                  <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    bgcolor={data?.active ? 'primary.main' : 'warning.main'}
+                    px={1}
+                    py={0.5}
+                    borderRadius={2}
+                    mb={1}
+                  >
+                    <Typography
+                      variant='caption'
+                      color='common.white'
+                      fontWeight={500}
+                    >
+                      {data?.active ? 'Active' : 'Hidden'}
+                    </Typography>
+                  </Box>
+                </Stack>
+
                 <Typography variant={'h1'} mb={2}>
                   {data?.name?.en}
                 </Typography>
                 <Typography variant={'body2'} color={'text.secondary'} mb={4}>
                   {data?.description?.en}
                 </Typography>
+                <Stack mb={2}>
+                  <Typography
+                    fontWeight={500}
+                    variant='caption'
+                    color='text.secondary'
+                  >
+                    {`Status`}
+                  </Typography>
+                  <Typography fontWeight={500} variant='h1'>
+                    {data?.active ? 'Active' : 'Hidden'}
+                  </Typography>
+                </Stack>
                 <Stack mb={2}>
                   <Typography
                     fontWeight={500}
@@ -160,6 +215,15 @@ const SingleProductView = () => {
                   color={'error'}
                 >
                   Delete
+                </Button>
+                <Button
+                  fullWidth
+                  onClick={onChangeStatus}
+                  variant={'contained'}
+                  color={'secondary'}
+                  disabled={isEditing}
+                >
+                  {data?.active ? 'Hide' : 'Show'}
                 </Button>
                 <Button
                   fullWidth
