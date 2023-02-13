@@ -1,3 +1,4 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
   Box,
   FormControl,
@@ -12,20 +13,19 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSnackbar } from 'notistack'
+import { useNavigate, useParams } from 'react-router-dom'
 
+import { DateTime } from 'luxon'
+import { useState } from 'react'
 import { api } from '../api'
-import { OrderProductType, OrderType, Status } from '../types/orders'
-import useFetchById from '../hooks/useFetchById'
-import { PRODUCT_DEFAULT_IMAGE } from '../constants'
+import ConfirmDialog from '../components/Dialogs/ConfirmDialog'
 import Loader from '../components/Loader/Loader'
 import StatusChip from '../components/StatusChip/StatusChip'
-import { DateTime } from 'luxon'
-import ConfirmDialog from '../components/Dialogs/ConfirmDialog'
-import { useState } from 'react'
+import { PRODUCT_DEFAULT_IMAGE } from '../constants'
+import useFetchById from '../hooks/useFetchById'
+import { OrderProductType, OrderType, Status } from '../types/orders'
 
 const SingleOrderView = () => {
   const { id } = useParams()
@@ -138,7 +138,22 @@ const SingleOrderView = () => {
                   </Typography>
                 </Stack>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
+                <Stack
+                  spacing={2}
+                  bgcolor={'secondary.main'}
+                  p={2}
+                  borderRadius={'12px'}
+                  textAlign={'right'}
+                  mx={2}
+                >
+                  <Typography color={'common.black'}>Shipping Cost</Typography>
+                  <Typography color={'common.black'} variant={'h3'}>
+                    {data?.shippingCost}EUR
+                  </Typography>
+                </Stack>
+              </Grid>
+              <Grid item xs={2}>
                 <Stack
                   spacing={2}
                   bgcolor={'secondary.main'}
@@ -153,7 +168,7 @@ const SingleOrderView = () => {
                   </Typography>
                 </Stack>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <Stack
                   spacing={2}
                   bgcolor={'secondary.main'}
@@ -249,6 +264,7 @@ const SingleOrderView = () => {
                   bgcolor={'primary.main'}
                   borderRadius={'12px'}
                   pb={2}
+                  mr={2}
                 >
                   <Stack spacing={2} direction={'row'}>
                     <img
@@ -264,6 +280,9 @@ const SingleOrderView = () => {
                     <Stack spacing={1}>
                       <Typography variant={'h5'} color={'common.white'}>
                         {product.name}
+                      </Typography>
+                      <Typography variant={'body2'} color={'common.white'}>
+                        Price: {product.price}EUR
                       </Typography>
                       <Typography variant={'body2'} color={'common.white'}>
                         Quantity: {product.quantity}

@@ -21,6 +21,8 @@ export interface OrderType {
   status: Status
   products: OrderProductType[]
   userId: string
+  productsPrice: number
+  shippingCost: number
   totalPrice: number
   deliveryAddress: string
   expeditedAt: string
