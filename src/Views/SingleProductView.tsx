@@ -72,6 +72,8 @@ const SingleProductView = () => {
     }
   }
 
+  const isDiscountActive = (data?.discount || 0) > 0
+
   const onChangeStatus = async () => {
     await editAsync({ active: !data?.active })
     if (!isEditingError) {
@@ -140,6 +142,7 @@ const SingleProductView = () => {
                     py={0.5}
                     borderRadius={2}
                     mb={1}
+                    mr={1}
                   >
                     <Typography
                       variant='caption'
@@ -149,6 +152,25 @@ const SingleProductView = () => {
                       {data?.active ? 'Active' : 'Hidden'}
                     </Typography>
                   </Box>
+                  {isDiscountActive && (
+                    <Box
+                      display={'flex'}
+                      alignItems={'center'}
+                      bgcolor={'info.main'}
+                      px={1}
+                      py={0.5}
+                      borderRadius={2}
+                      mb={1}
+                    >
+                      <Typography
+                        variant='caption'
+                        color='common.white'
+                        fontWeight={500}
+                      >
+                        Discount Active
+                      </Typography>
+                    </Box>
+                  )}
                 </Stack>
 
                 <Typography variant={'h1'} mb={2}>
@@ -191,6 +213,18 @@ const SingleProductView = () => {
                   </Typography>
                   <Typography fontWeight={500} variant='h1'>
                     {`${data?.price}EUR`}
+                  </Typography>
+                </Stack>
+                <Stack mb={2}>
+                  <Typography
+                    fontWeight={500}
+                    variant='caption'
+                    color='text.secondary'
+                  >
+                    {`Discount`}
+                  </Typography>
+                  <Typography fontWeight={500} variant='h1'>
+                    {`${data?.discount}%`}
                   </Typography>
                 </Stack>
                 <Stack mb={4}>

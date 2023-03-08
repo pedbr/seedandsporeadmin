@@ -2,11 +2,11 @@ import { Button, Grid, Stack, TextField, Typography } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 
-import UploadImage from '../UploadImage'
-import { ProductType } from '../../types/products'
 import { useSnackbar } from 'notistack'
-import { api } from '../../api'
 import { useState } from 'react'
+import { api } from '../../api'
+import { ProductType } from '../../types/products'
+import UploadImage from '../UploadImage'
 
 interface ProductFormProps {
   onSubmit: () => void
@@ -39,7 +39,7 @@ const ProductForm = ({
   })
 
   const onCreate = async (values: ProductType) => {
-    const { name, description, price, stock, weight } = values
+    const { name, description, price, stock, weight, discount } = values
     await createAsync({
       name,
       description,
@@ -47,6 +47,7 @@ const ProductForm = ({
       stock,
       imageUrl,
       weight,
+      discount,
     })
     if (!isCreatingError) {
       queryClient.invalidateQueries(['products'])
@@ -60,7 +61,7 @@ const ProductForm = ({
   }
 
   const onEdit = async (values: ProductType) => {
-    const { name, description, price, stock, weight } = values
+    const { name, description, price, stock, weight, discount } = values
     await editAsync({
       name,
       description,
@@ -68,6 +69,7 @@ const ProductForm = ({
       stock,
       imageUrl,
       weight,
+      discount,
     })
     if (!isEditingError) {
       queryClient.invalidateQueries([`product-${defaultValues?.id}`])
@@ -133,6 +135,15 @@ const ProductForm = ({
                   label={'Price (EUR)'}
                   type={'number'}
                   {...register('price', { required: true })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  label={'Discount (%)'}
+                  type={'number'}
+                  {...register('discount', { required: true })}
                 />
               </Grid>
               <Grid item xs={12}>

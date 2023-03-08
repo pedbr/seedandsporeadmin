@@ -17,7 +17,14 @@ import { PRODUCT_DEFAULT_IMAGE } from '../../constants'
 import { ProductType } from '../../types/products'
 import DeleteDialog from '../Dialogs/DeleteDialog'
 
-const ProductCard = ({ id, imageUrl, name, stock, active }: ProductType) => {
+const ProductCard = ({
+  id,
+  imageUrl,
+  name,
+  stock,
+  active,
+  discount,
+}: ProductType) => {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const {
@@ -50,6 +57,8 @@ const ProductCard = ({ id, imageUrl, name, stock, active }: ProductType) => {
       }
     }
   }
+
+  const isDiscountActive = discount > 0
 
   return (
     <>
@@ -93,20 +102,41 @@ const ProductCard = ({ id, imageUrl, name, stock, active }: ProductType) => {
                     fontWeight={700}
                   >{`${stock} Units`}</Typography>
                 </Box>
-                <Box
-                  bgcolor={active ? 'primary.main' : 'error.main'}
-                  px={1}
-                  py={0.5}
-                  borderRadius={2}
-                >
-                  <Typography
-                    variant='caption'
-                    color='common.white'
-                    fontWeight={700}
+                <Stack direction={'row'} spacing={2}>
+                  <Box
+                    bgcolor={active ? 'primary.main' : 'error.main'}
+                    px={1}
+                    py={0.5}
+                    borderRadius={2}
                   >
-                    {active ? 'Active' : 'Hidden'}
-                  </Typography>
-                </Box>
+                    <Typography
+                      variant='caption'
+                      color='common.white'
+                      fontWeight={700}
+                    >
+                      {active ? 'Active' : 'Hidden'}
+                    </Typography>
+                  </Box>
+                  {isDiscountActive && (
+                    <Box
+                      display={'flex'}
+                      alignItems={'center'}
+                      bgcolor={'info.main'}
+                      px={1}
+                      py={0.5}
+                      borderRadius={2}
+                      mb={1}
+                    >
+                      <Typography
+                        variant='caption'
+                        color='common.white'
+                        fontWeight={500}
+                      >
+                        Discount Active
+                      </Typography>
+                    </Box>
+                  )}
+                </Stack>
               </Stack>
             </Box>
           </CardContent>

@@ -15,6 +15,7 @@ export interface ProductType {
   imageUrl?: string
   available: boolean
   weight: number
+  discount: number
   categoryId?: number
   campaignId?: number
 }
