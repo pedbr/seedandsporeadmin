@@ -1,6 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
   Box,
+  Chip,
   FormControl,
   Grid,
   IconButton,
@@ -148,9 +149,19 @@ const SingleOrderView = () => {
                   mx={2}
                 >
                   <Typography color={'common.black'}>Shipping Cost</Typography>
-                  <Typography color={'common.black'} variant={'h3'}>
-                    {data?.shippingCost}EUR
-                  </Typography>
+                  <Stack
+                    direction='row'
+                    alignItems='center'
+                    justifyContent='end'
+                    spacing={1}
+                  >
+                    <Typography color={'common.black'} variant={'h3'}>
+                      {data?.shippingCost}EUR
+                    </Typography>
+                    <Chip
+                      label={data?.shippingCost > 0 ? 'Premium' : 'Standard'}
+                    />
+                  </Stack>
                 </Stack>
               </Grid>
               <Grid item xs={2}>
